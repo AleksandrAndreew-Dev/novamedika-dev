@@ -1,0 +1,84 @@
+html {
+    font-family: Palatino, Arial, serif;
+    font-weight: normal;
+    margin: 0; /* Убираем большой внешний отступ */
+    padding: 0;
+    overflow-x: hidden;
+}
+
+body {
+    width: 100%;
+    padding: 0 4px;
+    padding-bottom: 1000px;
+    margin: 0 auto; /* Центрирование body */
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
+    background-color: #E1EDEB;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.flex-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
+#one {
+margin-top: 70px;
+margin-left: 90px;
+max-width: 90%;
+    margin-bottom: 0;
+}
+
+#two {
+    margin-bottom: 0;
+    position: relative;
+}
+
+.sections-2 {
+    border-width: 3px;
+    border-style: solid;
+     border-color: #f9f9f9;
+     border-radius: 20px;
+    position: relative;
+    max-width: 90%;
+    box-sizing: border-box;
+    margin: 2rem auto; /* Центрируем блок */
+    padding: 1rem; /* Добавляем внутренние отступы */
+    height: auto; /* Делаем высоту адаптивной */
+    justify-content: center;
+    align-items: center;
+    display: flex; /* Flexbox для выравнивания содержимого */
+    flex-direction: column; /* Элементы размещаются по вертикали */
+}
+
+.sections-2 a {
+    text-decoration: none;
+}
+
+.sections-2 ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style-type: none;
+    padding: 0; /* Убираем отступы */
+    margin: 0; /* Убираем отступы */
+}
+
+.sections-2 li {
+    margin: 0 10px; /* Уменьшаем горизонтальные отступы для компактности */
+    border-radius: 12px; /* Немного меньшее скругление */
+    padding: 8px 12px; /* Внутренние отступы для симметрии */
+    border: 1px solid #ccc; /* Более мягкий цвет границы */
+    white-space: nowrap;
+    background-color: #f9f9f9; /* Добавляем фон для видимости */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Лёгкая тень */
+    transition: transform 0.2s ease, background-color 0.2s ease; /* Эффекты при наведении */
+}
+
+.sections-2 li:hover {
+    background-color: #e3f2fd; /* Светло-голубой цвет при наведении */
+    transform: scale(1.05); /* Лёгкое увеличение */
+}

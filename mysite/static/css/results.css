@@ -1,0 +1,80 @@
+/* Общий стиль таблицы */
+table {
+    width: 100%; /* Убедитесь, что таблица заполняет контейнер */
+    border-collapse: collapse;
+    margin: 0 auto;
+    font-size: 14px;
+    text-align: left;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Заголовок таблицы */
+table thead th {
+    background-color: #007bff; /* Голубой цвет для заголовка */
+    color: white; /* Белый текст */
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: center;
+    font-weight: bold;
+}
+/* Дополнительное стилизованное оформление таблицы */
+#search-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+
+
+table td, table th {
+
+    padding: 1px 2px; /* Уменьшение отступов внутри ячеек */
+    line-height: 1; /* Уменьшение высоты строки */
+    vertical-align: middle; /* Центрирование текста по вертикали */
+    }
+/* Полосатая таблица */
+table tbody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Светлый фон для чётных строк */
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* Белый фон для нечётных строк */
+}
+
+/* При наведении на строку */
+table tbody tr:hover {
+    background-color: #e9ecef; /* Лёгкий серый фон при наведении */
+    transition: background-color 0.3s ease;
+}
+
+/* Кнопка бронирования */
+.reserve-button {
+    background-color: #007bff; /* Цвет кнопки */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.reserve-button:hover {
+    background-color: #0056b3; /* Тёмно-синий при наведении */
+    transform: scale(1.05); /* Лёгкое увеличение при наведении */
+}
+
+.reserve-button:active {
+    background-color: #003f7f; /* Ещё более тёмный синий при нажатии */
+    transform: scale(0.95); /* Уменьшение при нажатии */
+}
+
+/* Пустая таблица (сообщение о пустом результате) */
+table tbody tr td[colspan] {
+    text-align: center;
+    font-style: italic;
+    color: #999;
+    padding: 20px;
+}

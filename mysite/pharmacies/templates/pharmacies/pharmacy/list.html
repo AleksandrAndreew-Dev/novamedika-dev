@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Аптеки Новамедика{% endblock %}
+
+{% block content %}
+<h1>Аптеки Новамедика</h1>
+{% for pharmacy in pharmacies %}
+<h2>
+    <a href="{{ pharmacy.get_absolute_url }}">{{ pharmacy.city }} {{pharmacy.name}} {{pharmacy.pharmacy_number}}
+    </a>
+
+</h2>
+
+{% endfor %}
+{% endblock %}
+

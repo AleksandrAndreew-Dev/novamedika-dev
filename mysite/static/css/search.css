@@ -1,0 +1,36 @@
+
+form#sform {
+    display: flex; /* Flex-контейнер для формы */
+    flex-direction: row; /* Элементы в строку */
+    align-items: center; /* Центрирование по вертикали */
+    gap: 2rem; /* Отступы между элементами */
+
+}
+
+.form-select {
+flex-wrap: nowrap;
+flex: 1 1 200px;
+}
+
+
+.search-input,
+.search-button {
+    flex: 1 1 5; /* Фиксированная ширина для каждого элемента */
+}
+
+.search-input {
+    width: 300px; /* Ширина текстового поля */
+}
+
+.search-button {
+    padding: 0.5rem 1rem; /* Отступы кнопки */
+    background-color: #007bff; /* Цвет кнопки */
+    color: white; /* Цвет текста кнопки */
+    border: none; /* Убираем границу */
+    border-radius: 4px; /* Скругление кнопки */
+    cursor: pointer; /* Указатель при наведении */
+}
+
+.search-button:hover {
+    background-color: #0056b3; /* Цвет кнопки при наведении */
+}

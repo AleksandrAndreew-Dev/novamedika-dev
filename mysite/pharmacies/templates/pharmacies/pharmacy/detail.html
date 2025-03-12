@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}{{pharmacy.name}} {{pharmacy.pharmacy_number}}{% endblock %}
+
+{% block content %}
+<h1>{{pharmacy.name}} {{pharmacy.pharmacy_number}}</h1>
+
+<ul>
+    <li>{{pharmacy.city}}</li>
+     <li>{{pharmacy.address}}</li>
+    <li>{{pharmacy.phone}}</li>
+    <li>{{pharmacy.opening_hours}}</li>
+</ul>
+
+{% endblock %}
+

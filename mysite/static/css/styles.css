@@ -1,0 +1,36 @@
+.welcome-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.welcome-title {
+    font-size: 36px;
+    color: #333;
+}
+
+.welcome-message {
+    font-size: 18px;
+    color: #666;
+    margin: 20px 0;
+}
+
+.welcome-nav-links {
+    list-style-type: none;
+    padding: 0;
+}
+
+.welcome-nav-links li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.welcome-nav-links a {
+    font-size: 16px;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.welcome-nav-links a:hover {
+    color: #0056b3;
+}

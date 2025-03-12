@@ -1,0 +1,102 @@
+.modal-content {
+    display: flex;
+    font-size: 12px; /* Compact font size */
+    flex-direction: column;
+    align-items: flex-start; /* Align inputs and labels to the left */
+    gap: 4px; /* Reduced spacing between elements */
+    background-color: #fefefe;
+    margin: auto;
+    padding: 4px; /* Compact overall padding */
+    border: 1px solid #888;
+    width: 600px; /* Width remains */
+    height: 600px; /* Compact height */
+    overflow-y: auto; /* Scroll only if necessary */
+    box-sizing: border-box; /* Proper size calculations */
+    border-radius: 6px; /* Slight rounding for aesthetics */
+}
+
+.modal-content input {
+    width: 100%; /* Inputs take full width */
+    padding: 3px; /* Reduce padding for a tighter design */
+    border: 1px solid #ccc; /* Consistent borders */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 12px; /* Match font size */
+    box-sizing: border-box; /* Account for padding in width */
+}
+
+.close {
+    font-size: 14px;
+    position: relative;
+    height: 20px;
+    width: 23px;
+    background-color: red;
+    color: white; /* Make the "X" visible */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    border-radius: 50%; /* Optional: make it a circle */
+    cursor: pointer;
+    margin-bottom: 30px;/* Add a pointer cursor for interactivity */
+}
+
+
+.modal-content label {
+    font-weight: 600; /* Make labels visible */
+    font-size: 12px; /* Match modal font size */
+    margin-bottom: 1px; /* Minimize space below labels */
+}
+
+.modal-content button {
+    align-self: flex-end; /* Align the button to the right */
+    padding: 4px 6px; /* Smaller button for compactness */
+    background-color: #4CAF50; /* Green action color */
+    color: white; /* White text for contrast */
+    border: none;
+    border-radius: 4px; /* Rounded button edges */
+    font-size: 12px; /* Match compact style */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin-top: 6px; /* Slight margin above button */
+}
+
+.modal-content button:hover {
+    background-color: #45a049; /* Subtle hover effect */
+}
+
+.modal-content .consent-text, .modal-content .confirmation-text {
+    font-size: 12px; /* Match modal font size */
+    color: #333; /* Neutral, easy-to-read color */
+    margin-top: 10px; /* Add space above the text */
+    line-height: 1.4; /* Improve readability */
+}
+
+.modal-content .consent-text a {
+    color: #007bff; /* Link color */
+    text-decoration: underline; /* Make the link visible */
+}
+.consent-text {
+    display: flex;
+    align-items: center; /* Ensure checkbox and text are vertically aligned */
+    font-size: 12px; /* Compact font size for better readability */
+    color: #333; /* Neutral, easy-to-read color */
+    line-height: 1.4; /* Improve readability of text */
+    gap: 5px; /* Add appropriate spacing between the checkbox and text */
+    width: 100%; /* Ensure the content spans the full width */
+}
+
+.consent-text input[type="checkbox"] {
+    margin: 0; /* Remove default margins around checkbox */
+    flex-shrink: 0; /* Prevent checkbox from shrinking */
+    cursor: pointer; /* Indicate interactivity */
+}
+
+.consent-text span {
+    display: inline-block; /* Ensure the text is rendered properly */
+    width: auto; /* Allow the span to adjust to the text length */
+    color: inherit; /* Ensure it uses the parent's color */
+}
+
+.consent-text a {
+    color: #007bff; /* Highlight link with blue */
+    text-decoration: underline; /* Make the link noticeable */
+    font-size: inherit; /* Keep font size consistent */
+}
