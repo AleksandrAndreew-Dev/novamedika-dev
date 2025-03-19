@@ -3,9 +3,10 @@ from django.views.generic import ListView
 from django.http import Http404, HttpResponse
 # Create your views here.
 from django.shortcuts import render
-from .forms import ProductSearchForm
-from .models import Pharmacy, Product
+from .forms import ProductSearchForm, ReserveForm
+from .models import Pharmacy, Product, Order
 from django.core.paginator import Paginator
+from .tasks import order_created
 
 
 
@@ -160,7 +161,7 @@ def product_search_with_results(request):
 
     grouped_forms = Product.objects.values('category').distinct().order_by('category')
 
-    paginated_products = Paginator(list(grouped_products.values()), 10)  # 10 продуктов на страницу
+    paginated_products = Paginator(list(grouped_products.values()), 20)  # 10 продуктов на страницу
     page_number = request.GET.get('page')
     page_obj = paginated_products.get_page(page_number)
     pharmacies = Pharmacy.objects.all()
@@ -185,12 +186,24 @@ def reserve(request):
         user_phone = request.POST.get('userPhone')
         quantity = request.POST.get('quantity')
         product_name = request.POST.get('productName')
+        product_price = request.POST.get('productPrice')
         pharmacy_name = request.POST.get('pharmacyName')
+        pharmacy_number = request.POST.get('pharmacyNumber')
+        order = Order.objects.create(user_name=user_name, user_surname=user_surname,
+                                     user_phone=user_phone, quantity=quantity,
+                                     product_name=product_name,
+                                     product_price=product_price,
+                                     pharmacy_name=pharmacy_name,
+                                     pharmacy_number=pharmacy_number)
+        order.save()
+        order_created.delay(order.id)
+
 
         # Логика бронирования
-        print(f"Бронирование: {product_name} в {pharmacy_name} для {user_name} {user_surname}. Телефон: {user_phone}, Количество: {quantity}")
+        # print(f"Бронирование: {product_name}, ожидаемая цена: {product_price} в {pharmacy_name}"
+        #       f" №{pharmacy_number} для {user_name} {user_surname}. Телефон: {user_phone}, Количество: {quantity}")
 
-        return HttpResponse("Бронирование успешно!")
+        return HttpResponse("Ваш заказ отправлен! Ожидайте подтверждение от аптеки")
 
     return HttpResponse("Неверный запрос.")
 

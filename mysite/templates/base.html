@@ -9,129 +9,81 @@
           rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
 
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
     <link rel="stylesheet" href="{% static 'css/modal.css' %}">
-        <link rel="stylesheet" href="{% static 'css/results.css' %}">
+    <link rel="stylesheet" href="{% static 'css/results.css' %}">
 
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 </head>
 <body>
 
 
-<div class="flex-wrapper container">
-    <div id="one">
-        <div id="carouselExample" class="carousel slide">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="{% static 'reklama/septo.png' %}" class="d-block w-100" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="{% static 'reklama/alpen.png' %}" class="d-block w-100" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="{% static 'reklama/nolpaza.png' %}" class="d-block w-100" alt="...">
-                </div>
+<header class="header container-lg">
+    {% block content %}
+    {% endblock %}
+
+</header>
+<main class="container-lg">
+
+    <section class=" row flex-wrapper container-fluid">
+
+
+        <div id="two" class="container">
+            <div class="row">
+                {% block search_bar%}
+                {% include 'includes/search_bar.html' %}
+                {% endblock %}
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+
+
         </div>
 
-<div class="container-m5 sections2">
-  <div class="sections-2">
-            <ul class="sections-2-ul container">
-                <li class="sections-2-li">
-                    <a class="sections-2-a" aria-current="page" href="#">Лекарства</a>
-                </li>
-                <li class="sections-2-li">
-                    <a class="sections-2-a" aria-current="page" href="#">Витамины</a>
-                </li>
-                <li class="sections-2-li">
-                    <a class="sections-2-a" aria-current="page" href="#">БАДы</a>
-                </li>
-                <li class="sections-2-li">
-                    <a class="sections-2-a" aria-current="page" href="#">Медтехника</a>
-                </li>
-                <li class="sections-2-li">
-                    <a class="sections-2-a" aria-current="page" href="#">Косметическая Продукция</a>
-                </li>
-                <li class="sections-2-li">
-                    <a class="sections-2-a" aria-current="page" href="#">Товары для Детей и Родителей</a>
-                </li>
-                <li class="sections-2-li">
-                    <a class="sections-2-a" aria-current="page" href="#">50+</a>
-                </li>
-            </ul>
+    </section>
+    <section class="row "></section>
+    <section class="row">
+         <div class="row results">
+
+            {% block results %}
+            {% endblock %}
         </div>
+    </section>
+
+</main>
+<div class="footer">
+    <ul>
+        <li><a href="#">Условия использования сервиса</a>  </li>
+        <li><a href="#"> Политика обработки данных</a></li>
+        <li><a href="#">Аптеки рядом: найди свою</a> </li>
+        <li><a href="#">Реклама</a> </li>
+        <li><a href="#">Контакты</a> </li>
+         <li><a href="#">Помощь</a> </li>
+
+
+
+    </ul>
+    <ul class="copyright">
+        <li> &#169;2025 Novamedika.com</li>
+    </ul>
+
 </div>
 
 
 
-    </div>
-
-    <div id="two" class="container">
-        {% block navbar%}
-        {% include 'includes/navbar.html' %}
-        {% endblock %}
-        {% block search_bar%}
-        {% include 'includes/search_bar.html' %}
-        {% endblock %}
-    </div>
-
-    <div id="three">
-
-        <div id="main-content" class="content">
-
-            <div class="sidebar-group">
-                <button class=" sidebar-menu open-btn">
-                    <img class="sidebar-menu " src="{% static 'images/menu.png' %}" alt="Menu">Каталог
-                </button>
-
-                <button class="sidebar-menu">
-                    <img class="sidebar-menu" src="{% static 'images/doctor.svg' %}" alt="Info">Информация
-                </button>
-                <button class="sidebar-menu">
-                    <img class="sidebar-menu" src="{% static 'images/pharmacy-svgrepo-com.svg' %}" alt="Акции">Акции и
-                    скидки
-                </button>
-                <button class="sidebar-menu">
-                    <img class="sidebar-menu"
-                         src="{% static 'images/icons8-fast-cart-64.png' %}"
-                         alt="Buy">Корзина
-                </button>
-                <button class="sidebar-menu">
-                    <img class="sidebar-menu" src="{% static 'images/stethoscope-doctor-svgrepo-com.svg' %}"
-                         alt="Статьи">Статьи
-                </button>
-            </div>
-
-            {% block content %}
-            {% endblock content %}
-        </div>
-
-        {% include 'includes/sidebar.html' %}
-    </div>
-</div>
-
-
-<!-- Подключение сайдбара -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
 <script src="{% static 'js/bootstrap_js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/modal.js' %}"></script>
-<script src="{% static 'js/populate_modal.js' %}"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+
+<!--<script src="{% static 'js/modal.js' %}"></script>-->
+<!--<script src="{% static 'js/populate_modal.js' %}"></script>-->
 <script src="{% static 'js/carusel.js' %}"></script>
 
 
-{% block scrypt %}
+{% block script %}
 {% endblock %}
 </body>
 </html>

@@ -1,54 +1,61 @@
-
 {% extends 'base.html' %}
 {% load static %}
+{% load customfilters %}
 {% block title %}
 Поиск лекарств
 {% endblock %}
 
 
-
 {% block search_bar %}
-<div id="search-form-div" class="search-form flex">
-    <label for="sform" class="form-label">Поиск лекарств</label>
+
+<div id="search-form-div" class="search-form">
+
+    <h2 class="logo-text"><span class="fletter">Н</span>ова<span class="fletter">М</span>едика </h2>
+    <span class="logo-text2">Сеть Аптек</span>
+
     <form id="sform" class="form-control flex" method="get" action=".">
-        <label class="form-label" for="city">Выберите город:</label>
-        <select name="city" id="city" class="form-select">
+        <img class="left-list" src="{% static 'images/logo/left-list.png' %}">
+        <label class="form-label" for="city-select">Выберите город</label>
+        <select name="city" id="city-select" class="form-select">
             <option value="">Все города</option>
             {% for city in unique_cities %}
-                <option value="{{ city.city }}" {% if city.is_selected %}selected{% endif %}>{{ city.city }}</option>
+            <option value="{{ city.city }}" {% if city.is_selected %}selected{% endif %}>{{ city.city }}</option>
             {% endfor %}
         </select>
-
         <input type="text" id="id_q" name="q" class="form-control search-input-text"
-               placeholder="Введите название, Например анальгин" value="{{ request.GET.q }}">
+               placeholder="Введите название, например анальгин" value="{{ request.GET.q }}">
         <button type="submit" class="search-button">Искать</button>
+        <img class="right-list" src="{% static 'images/logo/right-list.png' %}">
     </form>
-</div>
 
-<div class="results">
+</div>
+{% endblock %}
+
+{% block results %}
+<div class="results container-lg">
     {% if page_obj %}
-    <h2>Результаты поиска</h2>
-    <table id="results-table" class=" table-s table-light-active align-middle">
+    <h4 class="results-text">Результаты поиска:</h4>
+
+    <table id="results-table" class="table-sm table-light-active align-middle">
         <thead>
         <tr class="table-light">
             <th scope="col">Аптека</th>
-            <th class="col">Номер Аптеки</th>
             <th scope="col">Город</th>
             <th scope="col">Адрес</th>
             <th scope="col">Телефон</th>
             <th scope="col">Название</th>
             <th scope="col">Производитель</th>
             <th scope="col">Страна</th>
-            <th scope="col">Цена</th>
+            <th scope="col">Цена руб</th>
+            <th scope="col">Цена при бронировании он-лайн (руб)</th>
             <th scope="col">Забронировать</th>
-            <th scope="col">Количество</th>
+            <th scope="col">Количество в Аптеке</th>
         </tr>
         </thead>
         <tbody>
         {% for item in page_obj %}
         <tr class="table-light">
-            <td class="table-light">{{ item.product.pharmacy.name }}</td>
-            <td class="table-number table-light  ">{{ item.product.pharmacy.pharmacy_number }}</td>
+            <td class="table-light">{{ item.product.pharmacy.name }} №{{ item.product.pharmacy.pharmacy_number }}</td>
             <td class="table-light">{{ item.product.pharmacy.city }}</td>
             <td class="table-light">{{ item.product.pharmacy.address }}</td>
             <td class="table-light">{{ item.product.pharmacy.phone }}</td>
@@ -56,17 +63,22 @@
             <td class="table-light">{{ item.product.manufacturer }}</td>
             <td class="table-light">{{ item.product.country }}</td>
             <td class="table-light">{{ item.product.price }}</td>
+            <td class="table-light">{{ item.product.price|floatformat:2|multiply:0.95}} (-5%)</td>
             <td class="table-light">
-            <button type="button" class="btn btn-primary reserve-button"
-    data-bs-toggle="modal"
-    data-bs-target="#reservationModal"
-    data-product-name="{{ item.product.name }}"
-    data-pharmacy-name="{{ item.product.pharmacy.name }}"
-    data-pharmacy-phone="{{ item.product.pharmacy.phone }}"
-    data-pharmacy-address="{{ item.product.pharmacy.address }}">
-    Забронировать
-</button>
-     </td>
+                <button type="button" class=" btn reserve-button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#reservationModal"
+                        data-product-name="{{ item.product.name }}"
+                        data-product-price="{{ item.product.price }}"
+                        data-pharmacy-name="{{ item.product.pharmacy.name }}"
+                        data-pharmacy-number="{{ item.product.pharmacy.pharmacy_number }}"
+                        data-pharmacy-city="{{ item.product.pharmacy.city }}"
+                        data-pharmacy-phone="{{ item.product.pharmacy.phone }}"
+                        data-pharmacy-address="{{ item.product.pharmacy.address }}">
+                    Забронировать
+                </button>
+
+            </td>
 
             <td class="table-light">{{ item.product.quantity }}
                 {% if item.count > 1 %}
@@ -88,208 +100,178 @@
 
 </div>
 <!-- Модальное окно -->
-<div class="modal fade-sm" id="reservationModal" tabindex="-1" aria-labelledby="reservationModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="reservationModalLabel">Информация о бронировании</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Вывод информации об аптеке -->
-          <p><strong>Вы бронируете:</strong> <span id="modal-product-name"></span></p>
-        <p><strong>Аптека:</strong> <span id="modal-pharmacy-name"></span></p>
-        <p><strong>Номер аптеки:</strong> <span id="modal-pharmacy-number"></span></p>
-        <p><strong>Город:</strong> <span id="modal-pharmacy-city"></span></p>
-        <p><strong>Адрес:</strong> <span id="modal-pharmacy-address"></span></p>
-        <p><strong>Телефон:</strong> <span id="modal-pharmacy-phone"></span></p>
+<div class="modal fade-sm" id="reservationModal" tabindex="-1" aria-labelledby="reservationModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reservationModalLabel">Информация о бронировании</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Вывод информации об аптеке -->
+                <p><strong>Вы бронируете:</strong> <span id="modal-product-name"></span>
+                    <span id="modal-product-price"></span></p>
+                <p><strong>Аптека:</strong> <span id="modal-pharmacy-name"></span> №<span
+                        id="modal-pharmacy-number"></span></p>
 
-        <!-- Поля формы для бронирования -->
-        <form id="reservation-form">
-           <div class="mb-3">
-                <p class="consent-text">
+                <p><strong>Город:</strong> <span id="modal-pharmacy-city"></span></p>
+                <p><strong>Адрес:</strong> <span id="modal-pharmacy-address"></span></p>
+                <p><strong>Телефон:</strong> <span id="modal-pharmacy-phone"></span></p>
 
-         <span><input type="checkbox" required></span><span>
+                <!-- Поля формы для бронирования -->
+                <form id="reservation-form">
+                    <div class="mb-3">
+                        <p class="consent-text">
+
+                            <span><input type="checkbox" required></span><span>
         Я даю согласие на обработку своих персональных данных для оформления заявки на бронирование
         в соответствии с <a href="/policy/" target="_blank">Политикой Обработки Данных</a>.
     </span>
-</p>
+                        </p>
+                        <p class="consent-text">
+
+                            <span><input type="checkbox" required></span><span>
+        Я  согласен с правилами бронирования  для оформления заявки на бронирование
+        в соответствии с <a href="/policy/" target="_blank">Правилами Бронирования</a>.
+    </span>
+                        </p>
+                        <p>
+                            После нажатия кнопки «Забронировать», мы отправим Ваш запрос в аптеку и проинформируем Вас
+                            когда аптека получит заказ.
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="userName" name="userName" placeholder="Введите имя"
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userSurname" class="form-label">Фамилия</label>
+                        <input type="text" class="form-control" id="userSurname" name="userSurname"
+                               placeholder="Введите фамилию" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userPhone" class="form-label">Телефон</label>
+                        <input type="tel" class="form-control" id="userPhone" name="userPhone"
+                               placeholder="Введите телефон" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Количество</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+                    </div>
+                </form>
             </div>
-          <div class="mb-3">
-            <label for="userName" class="form-label">Имя</label>
-            <input type="text" class="form-control" id="userName" name="userName" placeholder="Введите имя" required>
-          </div>
-          <div class="mb-3">
-            <label for="userSurname" class="form-label">Фамилия</label>
-            <input type="text" class="form-control" id="userSurname" name="userSurname" placeholder="Введите фамилию" required>
-          </div>
-          <div class="mb-3">
-            <label for="userPhone" class="form-label">Телефон</label>
-            <input type="tel" class="form-control" id="userPhone" name="userPhone" placeholder="Введите телефон" required>
-          </div>
-          <div class="mb-3">
-            <label for="quantity" class="form-label">Количество</label>
-            <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-        <button type="button" class="btn btn-primary" id="submit-reservation">Забронировать</button>
-      </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submit-reservation">Забронировать</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 
-
-
-<!--<div id="reservationModal" class="modal">-->
-<!--    <div class="modal-content form-control">-->
-<!--        <span class="close">X</span>-->
-<!--        <h2>Забронировать товар</h2>-->
-
-<!--        <span class="product-name">Товар: </span>-->
-<!--        <span class="pharmacy-name">Аптека: </span>-->
-<!--        <span class="pharmacy-phone">Телефон: </span>-->
-<!--        <span class="pharmacy-address">Адрес: </span>-->
-
-<!--        &lt;!&ndash; Additional Information &ndash;&gt;-->
-<!--     <p class="consent-text">-->
-
-<!--         <span><input type="checkbox" required></span><span>-->
-<!--        Я даю согласие на обработку своих персональных данных для оформления заявки на бронирование-->
-<!--        в соответствии с <a href="/policy/" target="_blank">Политикой</a>.-->
-<!--    </span>-->
-<!--</p>-->
-
-
-<!--        <p class="confirmation-text">-->
-<!--            После нажатия кнопки «Подтвердить», мы отправим ваш запрос в аптеку и проинформируем вас,-->
-<!--            когда аптека получит заказ.-->
-<!--        </p>-->
-
-<!--        <form class="form-control-sm" method="post" action="/reserve/">-->
-<!--            {% csrf_token %}-->
-
-<!--            <label for="userName">Имя:</label>-->
-<!--            <input type="text" id="userName" name="userName" required>-->
-
-<!--            <label for="userSurname">Фамилия:</label>-->
-<!--            <input type="text" id="userSurname" name="userSurname" required>-->
-
-<!--            <label for="userPhone">Контактный номер:</label>-->
-<!--            <input type="tel" id="userPhone" name="userPhone" required>-->
-
-<!--            <label for="quantity">Количество:</label>-->
-<!--            <input type="number" id="quantity" name="quantity" min="1" required>-->
-
-<!--            <button type="submit">Подтвердить</button>-->
-<!--        </form>-->
-<!--    </div>-->
-<!--</div>-->
-
-
-
-<!--<div class="pagination">-->
-<!--        <span class="step-links">-->
-<!--            {% if page_obj.has_previous %}-->
-<!--                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.city %}city={{ request.GET.city }}&{% endif %}page=1">&laquo; первая</a>-->
-<!--                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.city %}city={{ request.GET.city }}&{% endif %}page={{ page_obj.previous_page_number }}">предыдущая</a>-->
-<!--            {% endif %}-->
-
-<!--            <span class="current">-->
-<!--                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.-->
-<!--            </span>-->
-
-<!--            {% if page_obj.has_next %}-->
-<!--                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.city %}city={{ request.GET.city }}&{% endif %}page={{ page_obj.next_page_number }}">следующая</a>-->
-<!--                <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.city %}city={{ request.GET.city }}&{% endif %}page={{ page_obj.paginator.num_pages }}">последняя &raquo;</a>-->
-<!--            {% endif %}-->
-<!--        </span>-->
-<!--</div>-->
 {% endif %}
 
-{% block scrypt %}
+{% block script %}
+
 <script>
-    $(document).ready(function() {
-        $('#results-table').DataTable({
-            paging: true,          // Включить пагинацию
-            searching: true,       // Включить строку поиска
-            ordering: true,        // Включить сортировку
-            pageLength: 10,        // Количество строк на странице
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ru.json' // Локализация на русский
-            }
-        });
-    });
+    if (!$.fn.dataTable.isDataTable('#results-table')) {
+      var table = $('#results-table').DataTable({
+          paging: true,
+          searching: true,
+          ordering: true,
+          pageLength: 10,
+
+          language: {
+              url: '/static/js/table_ru.json'
+          }
+
+      });
+
+      // Отсрочка изменения текста после завершения инициализации
+      table.on('init', function() {
+          $('.dataTables_filter label').contents().first()[0].textContent = 'Поиск по результатам: ';
+      });
+  }
+
 
 $(document).on('click', '.reserve-button', function () {
-    // Получаем данные из кнопки
-    const productName = $(this).data('product-name');
-    const pharmacyName = $(this).data('pharmacy-name');
-    const pharmacyNumber = $(this).data('pharmacy-number');
-    const pharmacyPhone = $(this).data('pharmacy-phone');
-    const pharmacyAddress = $(this).data('pharmacy-address');
+  // Получаем данные из кнопки
+  const productName = $(this).data('product-name');
+   const productPrice = $(this).data('product-price');
+  const pharmacyName = $(this).data('pharmacy-name');
+  const pharmacyNumber = $(this).data('pharmacy-number');
     const pharmacyCity = $(this).data('pharmacy-city');
+  const pharmacyPhone = $(this).data('pharmacy-phone');
+  const pharmacyAddress = $(this).data('pharmacy-address');
 
-    // Заполняем данные в модальное окно
-     $('#modal-product-name').text(productName);
-    $('#modal-pharmacy-name').text(pharmacyName);
-    $('#modal-pharmacy-number').text(pharmacyNumber);
-    $('#modal-pharmacy-city').text(pharmacyCity);
-    $('#modal-pharmacy-address').text(pharmacyAddress);
-    $('#modal-pharmacy-phone').text(pharmacyPhone);
 
-    // Сохраняем данные в форме (если нужно использовать в запросе)
-    $('#reservation-form').data('product-name', productName);
-    $('#reservation-form').data('pharmacy-name', pharmacyName);
-    $('#reservation-form').data('pharmacy-number', pharmacyNumber);
-    $('#reservation-form').data('pharmacy-phone', pharmacyPhone);
-    $('#reservation-form').data('pharmacy-city', pharmacyCity);
-    $('#reservation-form').data('pharmacy-address', pharmacyAddress);
+  // Заполняем данные в модальное окно
+   $('#modal-product-name').text(productName);
+    $('#modal-product-price').text(productPrice);
+  $('#modal-pharmacy-name').text(pharmacyName);
+  $('#modal-pharmacy-number').text(pharmacyNumber);
+  $('#modal-pharmacy-city').text(pharmacyCity);
+  $('#modal-pharmacy-address').text(pharmacyAddress);
+  $('#modal-pharmacy-phone').text(pharmacyPhone);
+
+  // Сохраняем данные в форме (если нужно использовать в запросе)
+  $('#reservation-form').data('product-name', productName);
+   $('#reservation-form').data('product-price', productPrice);
+  $('#reservation-form').data('pharmacy-name', pharmacyName);
+  $('#reservation-form').data('pharmacy-number', pharmacyNumber);
+  $('#reservation-form').data('pharmacy-phone', pharmacyPhone);
+  $('#reservation-form').data('pharmacy-city', pharmacyCity);
+  $('#reservation-form').data('pharmacy-address', pharmacyAddress);
 });
 
 
 $('#submit-reservation').on('click', function () {
-    // Получение данных из формы
-    const userName = $('#userName').val();
-    const userSurname = $('#userSurname').val();
-    const userPhone = $('#userPhone').val();
-    const quantity = $('#quantity').val();
-    const productName = $('#reservation-form').data('product-name');
-    const pharmacyName = $('#reservation-form').data('pharmacy-name');
+  // Получение данных из формы
+  const userName = $('#userName').val();
+  const userSurname = $('#userSurname').val();
+  const userPhone = $('#userPhone').val();
+  const quantity = $('#quantity').val();
+  const productName = $('#reservation-form').data('product-name');
+   const productPrice = $('#reservation-form').data('product-price');
+  const pharmacyName = $('#reservation-form').data('pharmacy-name');
+  const pharmacyNumber = $('#reservation-form').data('pharmacy-number');
 
-    // Проверка на заполненность формы
-    if (!userName || !userSurname || !userPhone || !quantity) {
-        alert("Пожалуйста, заполните все поля формы.");
-        return;
-    }
+  // Проверка на заполненность формы
+  if (!userName || !userSurname || !userPhone || !quantity) {
+      alert("Пожалуйста, заполните все поля формы.");
+      return;
+  }
 
-    // AJAX-запрос
-    $.ajax({
-        type: "POST",
-        url: "{% url 'pharmacies:reserve' %}",
-        data: {
-            csrfmiddlewaretoken: '{{ csrf_token }}', // CSRF-токен
-            userName: userName,
-            userSurname: userSurname,
-            userPhone: userPhone,
-            quantity: quantity,
-            productName: productName,
-            pharmacyName: pharmacyName
-        },
-        success: function (response) {
-            alert("Бронирование успешно!");
-            $('#reservationModal').modal('hide'); // Закрыть модальное окно
-        },
-        error: function () {
-            alert("Ошибка бронирования. Попробуйте снова.");
-        }
-    });
+  // AJAX-запрос
+  $.ajax({
+      type: "POST",
+      url: "{% url 'pharmacies:reserve' %}",
+      data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}', // CSRF-токен
+          userName: userName,
+          userSurname: userSurname,
+          userPhone: userPhone,
+          quantity: quantity,
+          productName: productName,
+          productPrice: productPrice,
+          pharmacyName: pharmacyName,
+          pharmacyNumber: pharmacyNumber
+      },
+      success: function (response) {
+          alert("Ваш заказ отправлен! Ожидайте подтверждения от аптеки.");
+          $('#reservationModal').modal('hide'); // Закрыть модальное окно
+      },
+      error: function () {
+          alert("Ошибка бронирования. Попробуйте снова.");
+      }
+  });
 });
 
 
 </script>
+
 {% endblock %}
 {% endblock %}

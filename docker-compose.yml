@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+    command: gunicorn --bind 0.0.0.0:8000 mysite.wsgi:application
+    restart: always
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=mysite.settings
+      - PYTHONPATH=/code
+    depends_on:
+      - rabbitmq
+      - celery_worker
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./static:/code/static
+    depends_on:
+      - web
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  celery_worker:
+    build:
+      context: .
+    command: celery -A mysite worker --loglevel=info
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/code
+    environment:
+      DJANGO_SETTINGS_MODULE: mysite.settings.local
+      CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672/
+      CELERY_RESULT_BACKEND: rpc://
+
+  celery_beat:
+    build:
+      context: .
+    command: celery -A mysite beat --loglevel=info
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/code
+    environment:
+      DJANGO_SETTINGS_MODULE: mysite.settings.local
+      CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672/
+      CELERY_RESULT_BACKEND: rpc://

@@ -4,6 +4,8 @@ form#sform {
     flex-direction: row; /* Элементы в строку */
     align-items: center; /* Центрирование по вертикали */
     gap: 2rem; /* Отступы между элементами */
+    padding-left: 5%;
+
 
 }
 
@@ -11,6 +13,28 @@ form#sform {
 flex-wrap: nowrap;
 flex: 1 1 200px;
 }
+
+.logo-text2,
+.logo-text {
+display: flex;
+
+ align-items: center;
+justify-content: center;
+color:green
+}
+.logo-text2 {
+color:black;
+margin-bottom: 3%;
+}
+
+.fletter {
+    color:orange;
+
+}
+
+
+
+
 
 
 .search-input,
@@ -23,7 +47,7 @@ flex: 1 1 200px;
 }
 
 .search-button {
-    padding: 0.5rem 1rem; /* Отступы кнопки */
+    padding: 0.3rem 1rem; /* Отступы кнопки */
     background-color: #007bff; /* Цвет кнопки */
     color: white; /* Цвет текста кнопки */
     border: none; /* Убираем границу */

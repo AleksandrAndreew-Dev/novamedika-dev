@@ -12,73 +12,78 @@ body {
     padding-bottom: 1000px;
     margin: 0 auto; /* Центрирование body */
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
-    background-color: #E1EDEB;
+    background-color: white;
 }
 
 * {
+
     box-sizing: border-box;
 }
+.header {
+display: flex;
+flex-direction: column;
+}
+
 
 .flex-wrapper {
+margin-top: 70px;
     display: flex;
     flex-direction: column;
     max-width: 100%;
+    align-items: center;
 }
 
-#one {
-margin-top: 70px;
-margin-left: 90px;
-max-width: 90%;
-    margin-bottom: 0;
-}
 
 #two {
     margin-bottom: 0;
     position: relative;
 }
 
-.sections-2 {
-    border-width: 3px;
-    border-style: solid;
-     border-color: #f9f9f9;
-     border-radius: 20px;
-    position: relative;
-    max-width: 90%;
-    box-sizing: border-box;
-    margin: 2rem auto; /* Центрируем блок */
-    padding: 1rem; /* Добавляем внутренние отступы */
-    height: auto; /* Делаем высоту адаптивной */
-    justify-content: center;
-    align-items: center;
-    display: flex; /* Flexbox для выравнивания содержимого */
-    flex-direction: column; /* Элементы размещаются по вертикали */
+.left-list {
+left: 1%;
+bottom: 19%;
+display: flex;
+width: 3.2%;
+position:absolute;
+
 }
 
-.sections-2 a {
-    text-decoration: none;
+.right-list {
+right: 1%;
+bottom: 0.4%;
+
+display: flex;
+
+width: 5%;
+position:absolute;
+
 }
 
-.sections-2 ul {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    list-style-type: none;
-    padding: 0; /* Убираем отступы */
-    margin: 0; /* Убираем отступы */
+.results-text {
+display: flex;
+margin: 3% 0 3% 0;
 }
 
-.sections-2 li {
-    margin: 0 10px; /* Уменьшаем горизонтальные отступы для компактности */
-    border-radius: 12px; /* Немного меньшее скругление */
-    padding: 8px 12px; /* Внутренние отступы для симметрии */
-    border: 1px solid #ccc; /* Более мягкий цвет границы */
-    white-space: nowrap;
-    background-color: #f9f9f9; /* Добавляем фон для видимости */
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Лёгкая тень */
-    transition: transform 0.2s ease, background-color 0.2s ease; /* Эффекты при наведении */
+.footer ul {
+list-style-type: none;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-content: flex-start;
+padding: 0;
+    margin: 0;
+margin-top: 7%;
 }
 
-.sections-2 li:hover {
-    background-color: #e3f2fd; /* Светло-голубой цвет при наведении */
-    transform: scale(1.05); /* Лёгкое увеличение */
+.footer ul li {
+    margin: 0 10px; /* Добавляет отступы между пунктами */
+}
+
+.footer ul li a {
+    text-decoration: none; /* Убирает подчеркивание ссылок */
+    color: #007bff; /* Устанавливает цвет ссылок */
+}
+
+.footer .copyright {
+margin-top: 2%;
 }
