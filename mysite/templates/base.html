@@ -14,6 +14,7 @@
 
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
     <link rel="stylesheet" href="{% static 'css/modal.css' %}">
+
     <link rel="stylesheet" href="{% static 'css/results.css' %}">
 
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
@@ -21,15 +22,17 @@
 <body>
 
 
-<header class="header container-lg">
-    {% block content %}
-    {% endblock %}
-
-</header>
 <main class="container-lg">
 
     <section class=" row flex-wrapper container-fluid">
 
+<header class="header container">
+    <h1 class="logo-text"><span class="fletter">Н</span>ова<span class="fletter">М</span>едика </h1>
+    <span class="logo-text2">Сеть Аптек</span>
+    {% block content %}
+    {% endblock %}
+
+</header>
 
         <div id="two" class="container">
             <div class="row">
@@ -42,44 +45,38 @@
         </div>
 
     </section>
-    <section class="row "></section>
-    <section class="row">
-         <div class="row results">
 
-            {% block results %}
-            {% endblock %}
-        </div>
-    </section>
+ {% block results %}
 
+ {% endblock %}
 </main>
-<div class="footer">
-    <ul>
-        <li><a href="#">Условия использования сервиса</a>  </li>
-        <li><a href="#"> Политика обработки данных</a></li>
-        <li><a href="#">Аптеки рядом: найди свою</a> </li>
-        <li><a href="#">Реклама</a> </li>
-        <li><a href="#">Контакты</a> </li>
-         <li><a href="#">Помощь</a> </li>
+<div class="footer container-fluid text-center">
+    <ul class="list-inline">
+        <li class="list-inline-item"><a href="#">Условия использования сервиса</a>  </li>
+        <li class="list-inline-item"><a href="#"> Политика обработки данных</a></li>
+        <li class="list-inline-item"><a href="#">Аптеки рядом</a> </li>
+        <li class="list-inline-item"><a href="#">Реклама</a> </li>
+        <li class="list-inline-item"><a href="#">Контакты</a> </li>
+         <li class="list-inline-item"><a href="#">Помощь</a> </li>
 
 
 
     </ul>
-    <ul class="copyright">
-        <li> &#169;2025 Novamedika.com</li>
-    </ul>
+
 
 </div>
+
+ <footer class=" footer container-fluid text-center">
+         &#169;2025 Novamedika.com
+    </footer>
+
+
 
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script src="{% static 'js/bootstrap_js/bootstrap.bundle.min.js' %}"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-
-
-<!--<script src="{% static 'js/modal.js' %}"></script>-->
-<!--<script src="{% static 'js/populate_modal.js' %}"></script>-->
 <script src="{% static 'js/carusel.js' %}"></script>
 
 

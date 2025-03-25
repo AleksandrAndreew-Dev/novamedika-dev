@@ -1,0 +1,31 @@
+<div class="results container-lg">
+    <h4 class="results-text">Аптеки для: {{ selected_name }} ({{ selected_form }})</h4>
+    <table id="pharmacy-table" class="table-sm table-light-active align-middle">
+        <thead>
+            <tr>
+                <th>Аптека</th>
+                <th>Город</th>
+                <th>Адрес</th>
+                <th>Телефон</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Производитель</th>
+                <th>Страна</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pharmacy in pharmacies %}
+            <tr>
+                <td>{{ pharmacy.pharmacy.name }} №{{ pharmacy.pharmacy.pharmacy_number }}</td>
+                <td>{{ pharmacy.pharmacy.city }}</td>
+                <td>{{ pharmacy.pharmacy.address }}</td>
+                <td>{{ pharmacy.pharmacy.phone }}</td>
+                <td>{{ pharmacy.price }} Br</td>
+                <td>{{ pharmacy.quantity }}</td>
+                <td>{{ pharmacy.manufacturer }}</td>
+                <td>{{ pharmacy.country }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

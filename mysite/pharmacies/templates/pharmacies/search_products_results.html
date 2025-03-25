@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load customfilters %}
+
+{% block title %}
+Поиск лекарств
+{% endblock %}
+
+
+{% block results%}
+
+<div class="results container-lg">
+    <h4 class="results-text">Результаты поиска:</h4>
+    <table id="product-table" class="table-lg table-light-active align-middle">
+        <thead>
+            <tr class="table-light">
+                <th  scope="col">Название</th>
+                <th  scope="col">Форма</th>
+                <th  scope="col">Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in grouped_products %}
+            <tr class="table-light">
+                <td class="table-light">{{ group.name }}</td>
+                <td class="table-light">{{ group.form }}</td>
+
+
+                <td class="table-light">
+                    <form method="get" action="{% url 'pharmacies:search' %}">
+                        <input type="hidden" name="name" value="{{ group.name }}">
+                        <input type="hidden" name="form" value="{{ group.form }}">
+                        <input type="hidden" name="city" value="{{ city_query }}">
+
+                        <button type="submit" class="btn btn-info btn-choice">Выбрать</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

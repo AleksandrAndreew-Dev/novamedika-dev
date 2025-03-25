@@ -7,26 +7,31 @@ html {
 }
 
 body {
-    width: 100%;
-    padding: 0 4px;
-    padding-bottom: 1000px;
-    margin: 0 auto; /* Центрирование body */
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
-    background-color: white;
+    /* Adjust for realistic spacing */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
+
 
 * {
 
     box-sizing: border-box;
 }
+
 .header {
-display: flex;
-flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontally center items */
+    justify-content: center; /* Vertically center items */
+    position: relatve; /* Position relative to the viewport */
+   /* Push right by 50% of the viewport width */
+   /* Offset to truly center the element */
+    width: 100%; /* Optional: Set the width as needed */
+    margin: 0; /* Reset margin for precise centering */
 }
 
 
 .flex-wrapper {
-margin-top: 70px;
+margin-top: 2%;
     display: flex;
     flex-direction: column;
     max-width: 100%;
@@ -39,29 +44,32 @@ margin-top: 70px;
     position: relative;
 }
 
-.left-list {
+.left-leaf,
+.left-leaf img {
 left: 1%;
-bottom: 19%;
+top: 0;
 display: flex;
-width: 3.2%;
+width: 16%;
+
+max-width: 30%;
 position:absolute;
 
 }
 
-.right-list {
+.right-leaf,
+.right-leaf img{
 right: 1%;
-bottom: 0.4%;
+bottom: 0%;
 
 display: flex;
 
-width: 5%;
+width: 20%;
 position:absolute;
-
 }
 
 .results-text {
 display: flex;
-margin: 3% 0 3% 0;
+margin: 3% 0;
 }
 
 .footer ul {
@@ -72,7 +80,7 @@ justify-content: center;
 align-content: flex-start;
 padding: 0;
     margin: 0;
-margin-top: 7%;
+margin-top: 2%;
 }
 
 .footer ul li {
@@ -84,6 +92,92 @@ margin-top: 7%;
     color: #007bff; /* Устанавливает цвет ссылок */
 }
 
-.footer .copyright {
-margin-top: 2%;
+.footer   {
+padding: 3% 0;
+}
+
+@media (max-width: 768px) {
+
+
+
+    .header {
+        text-align: center;
+        font-size: 2rem; /* Adjust font size for better readability */
+        padding: 10px 0; /* Add padding for a cleaner look */
+    }
+
+    .results {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px; /* Add spacing between result items */
+        padding: 10px; /* Add padding around results */
+    }
+
+    /* Footer adjustments */
+    .footer .list-inline {
+        display: flex;
+        flex-direction: column; /* Stack items vertically */
+        align-items: center;
+        justify-content: center;
+        gap: 3px; /* Increase spacing for better clarity */
+        margin: 0; /* Adjust spacing for the footer */
+        font-size: 0.85rem; /* Fine-tune font size */
+        text-align: center; /* Center-align footer links */
+    }
+
+    .footer .list-inline-item {
+        margin: 8px 0; /* Improve vertical spacing for better usability */
+    }
+
+    .copyright {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 0.8rem; /* Further reduce font size */
+        margin-top: 1%; /* Add spacing above copyright */
+    }
+
+    /* Improve form inputs and buttons */
+    form#sform {
+        flex-direction: column; /* Stack form elements vertically */
+        gap: 15px; /* Add space between elements */
+        align-items: center; /* Center-align form content */
+        width: 90%; /* Take most of the screen width */
+        margin: 0 auto; /* Center the form */
+    }
+
+    .form-select,
+    .search-input,
+    .search-button {
+        width: 100%; /* Ensure elements span the full width */
+    }
+
+    /* Optimize images */
+    img {
+        max-width: 100%; /* Ensure images don't overflow */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+    .left-leaf, .right-leaf {
+        display: none; /* Hide decorative elements on mobile */
+    }
+
+    /* Improve logo presentation */
+    .logo-text2 {
+        font-size: 1rem; /* Reduce size for smaller screens */
+        margin-bottom: 10px; /* Add some spacing below the logo */
+    }
+    .logo-text {
+        font-size: 3rem; /* Reduce size for smaller screens */
+        margin-bottom: 10px; /* Add some spacing below the logo */
+    }
+
+    /* Adjust sections for spacing */
+    section.row {
+        padding: 15px; /* Add spacing inside sections */
+        gap: 10px; /* Space between section children */
+    }
 }

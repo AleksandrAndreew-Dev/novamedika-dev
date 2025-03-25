@@ -12,14 +12,14 @@ class PharmacyAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'manufacturer', 'country', 'serial', 'price', 'quantity', 'pharmacy']
-    list_filter = ['name', 'manufacturer', 'country', 'serial', 'price', 'quantity', 'pharmacy']
+    list_display = ['name', 'form', 'manufacturer', 'country', 'serial', 'price', 'quantity', 'pharmacy']
+    list_filter = ['name', 'form', 'manufacturer', 'country', 'serial', 'price', 'quantity', 'pharmacy']
     search_fields = ['name']
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['processed', 'pharmacy_name', 'pharmacy_number',
-                    'user_name','user_surname', 'user_phone',
+                    'user_name', 'user_surname', 'user_phone',
                     'product_name', 'product_price', 'quantity']
 
 

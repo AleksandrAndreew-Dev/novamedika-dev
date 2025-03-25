@@ -1,60 +1,99 @@
+:root {
+    --primary-color: #007bff; /* Основной цвет */
+    --hover-color: #0056b3; /* Цвет при наведении */
+    --text-color: green; /* Основной цвет текста */
+    --secondary-text-color: black; /* Вторичный цвет текста */
+    --accent-color: orange; /* Акцентный цвет */
+}
 
 form#sform {
     display: flex; /* Flex-контейнер для формы */
     flex-direction: row; /* Элементы в строку */
     align-items: center; /* Центрирование по вертикали */
-    gap: 2rem; /* Отступы между элементами */
-    padding-left: 5%;
-
-
+    gap: 15px;
+    padding-left: 2.5%;/* Расстояние между элементами */
 }
 
 .form-select {
-flex-wrap: nowrap;
-flex: 1 1 200px;
+   /* Элемент заполняет доступное пространство */
+    margin-right: 2%; /* Отступ */
+   /* Цвет текста */
+   /* Фон */
+    font-size: 14px; /* Размер шрифта */
+    padding: 5px;
+   width: 25%;/* Внутренние отступы */
 }
+
 
 .logo-text2,
 .logo-text {
-display: flex;
-
- align-items: center;
-justify-content: center;
-color:green
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
 }
+
 .logo-text2 {
-color:black;
-margin-bottom: 3%;
+    color: var(--secondary-text-color);
+    margin-bottom: 3%;
 }
 
 .fletter {
-    color:orange;
-
+    color: var(--accent-color);
 }
 
-
-
-
-
-
-.search-input,
+.search-input[type="text"],
 .search-button {
-    flex: 1 1 5; /* Фиксированная ширина для каждого элемента */
+    flex: 1; /* Одинаковое распределение пространства */
+    max-width: 100%; /* Ограничение ширины */
 }
 
 .search-input {
-    width: 300px; /* Ширина текстового поля */
+    width: 100%; /* Заполнение доступного пространства */
 }
 
 .search-button {
     padding: 0.3rem 1rem; /* Отступы кнопки */
-    background-color: #007bff; /* Цвет кнопки */
+    background-color: var(--primary-color); /* Цвет кнопки */
     color: white; /* Цвет текста кнопки */
     border: none; /* Убираем границу */
     border-radius: 4px; /* Скругление кнопки */
     cursor: pointer; /* Указатель при наведении */
+    transition: background-color 0.3s ease; /* Плавный переход */
 }
 
 .search-button:hover {
-    background-color: #0056b3; /* Цвет кнопки при наведении */
+    background-color: var(--hover-color); /* Цвет кнопки при наведении */
+}
+
+/* Стили для состояния фокуса */
+.search-button:focus,
+.search-input:focus {
+    outline: 2px solid var(--primary-color); /* Выделение при фокусе */
+}
+
+/* Adaptive Design for Small Screens */
+@media (max-width: 768px) {
+
+    .left-leaf, .right-leaf {
+        display: none; /* Скрытие на небольших экранах */
+    }
+
+    form#sform {
+        max-width: 100%; /* Установка ширины */
+        flex-direction: column; /* Элементы в колонку */
+        align-items: center; /* Центрирование по вертикали */
+        justify-content: center; /* Центрирование по горизонтали */
+        gap: 10px; /* Расстояние между элементами */
+    }
+
+    .search-button, .form-select, .search-input {
+        flex: none; /* Отключение гибкого размера */
+        width: 100%; /* Полная ширина на маленьких экранах */
+        margin: 5px 0; /* Отступы между элементами */
+    }
+
+    .search-button {
+        margin-top: 10px; /* Верхний отступ */
+    }
 }

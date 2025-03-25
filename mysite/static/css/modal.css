@@ -1,118 +1,161 @@
 .modal-content {
     display: flex;
-    font-size: 12px; /* Compact font size */
     flex-direction: column;
-    align-items: flex-start; /* Align inputs and labels to the left */
-   /* Reduced spacing between elements */
-    background-color: #fefefe;
-    margin: 2px;
-    padding: 4px; /* Compact overall padding */
-    border: 1px solid #888;
-    width: 600px; /* Width remains */
-    height: 700px; /* Compact height */
-    overflow-y: auto; /* Scroll only if necessary */
-    box-sizing: border-box; /* Proper size calculations */
-    border-radius: 6px; /* Slight rounding for aesthetics */
+    align-items: flex-start;
+    font-size: 12px;
+    background-color: #f0f8ff; /* Светло-голубой фон для спокойного дизайна */
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #aacfe3; /* Голубая граница */
+    width: 90%; /* Для адаптивности (занимает 90% ширины экрана) */
+    max-width: 600px; /* Ограничение максимальной ширины */
+    height: auto; /* Высота подстраивается под содержимое */
+    max-height: 80vh; /* Не выходит за пределы экрана */
+    overflow-y: auto;
+    box-sizing: border-box;
+    border-radius: 8px; /* Лёгкое скругление углов */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Мягкая тень */
 }
+
 .modal-header {
-width: 100%;
-position: relative;
-font-size: 14px;
-
+    width: 100%;
+    position: relative;
+    font-size: 14px;
+    color: #004080; /* Насыщенный синий для заголовка */
+    font-weight: bold;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #d1eaf3; /* Добавление разделителя */
 }
+
 .modal-content input {
-    width: 100%; /* Inputs take full width */
-    padding: 3px; /* Reduce padding for a tighter design */
-    border: 1px solid #ccc; /* Consistent borders */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 12px; /* Match font size */
-    box-sizing: border-box; /* Account for padding in width */
+    width: 100%;
+    padding: 8px; /* Увеличенные отступы для удобства */
+    border: 1px solid #aacfe3; /* Голубая граница */
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    margin-bottom: 10px;
 }
-
 
 .btn-close {
     font-size: 14px;
     position: absolute;
-top: 31%;
-    right: 1%;
-
-
-        display: flex;
-
-height: 17px;
-    width: 20px;
-    background-color: red;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    height: 25px;
+    width: 25px;
+    background-color: #e57373; /* Мягкий красный для кнопки закрытия */
     color: white;
-    /* Make the "X" visible */
-
-   /* Use flexbox for alignment */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    border-radius: 50%; /* Optional: make it a circle */
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
     cursor: pointer;
-
-
-    /* Add a pointer cursor for interactivity */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
+.btn-close:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background-color: #d32f2f; /* Более насыщенный красный при наведении */
+}
 
 .modal-content label {
-    font-weight: 600; /* Make labels visible */
-    font-size: 12px; /* Match modal font size */
-    margin-bottom: 1px; /* Minimize space below labels */
+    font-weight: 600;
+    font-size: 14px;
+    color: #004080; /* Цвет в той же гамме, что заголовок */
+    margin-bottom: 5px;
 }
 
 .modal-content button {
-    align-self: flex-end; /* Align the button to the right */
-    padding: 4px 6px; /* Smaller button for compactness */
-    background-color: #4CAF50; /* Green action color */
-    color: white; /* White text for contrast */
+    align-self: flex-end;
+    padding: 10px 16px; /* Большие отступы для удобства */
+    background-color: #59a5f7; /* Яркий голубой акцент */
+    color: white;
     border: none;
-    border-radius: 4px; /* Rounded button edges */
-    font-size: 12px; /* Match compact style */
-    cursor: pointer; /* Pointer cursor on hover */
-    margin-top: 6px; /* Slight margin above button */
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    margin-top: 10px;
 }
 
 .modal-content button:hover {
-    background-color: #45a049; /* Subtle hover effect */
+    background-color: #317daf; /* Насыщенный голубой при наведении */
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content .consent-text, .modal-content .confirmation-text {
-    font-size: 12px; /* Match modal font size */
-    color: #333; /* Neutral, easy-to-read color */
-    margin-top: 10px; /* Add space above the text */
-    line-height: 1.4; /* Improve readability */
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px;
+    line-height: 1.6;
 }
 
 .modal-content .consent-text a {
-    color: #007bff; /* Link color */
-    text-decoration: underline; /* Make the link visible */
+    color: #007bff;
+    text-decoration: underline;
 }
+
 .consent-text {
     display: flex;
-    align-items: center; /* Ensure checkbox and text are vertically aligned */
-    font-size: 12px; /* Compact font size for better readability */
-    color: #333; /* Neutral, easy-to-read color */
-    line-height: 1.4; /* Improve readability of text */
-    gap: 5px; /* Add appropriate spacing between the checkbox and text */
-    width: 100%; /* Ensure the content spans the full width */
+    align-items: center;
+    font-size: 14px;
+    color: #333;
+    gap: 10px;
+    width: 100%;
 }
 
 .consent-text input[type="checkbox"] {
-    margin: 0; /* Remove default margins around checkbox */
-    flex-shrink: 0; /* Prevent checkbox from shrinking */
-    cursor: pointer; /* Indicate interactivity */
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
 }
 
 .consent-text span {
-    display: inline-block; /* Ensure the text is rendered properly */
-    width: auto; /* Allow the span to adjust to the text length */
-    color: inherit; /* Ensure it uses the parent's color */
+    display: inline-block;
+    width: auto;
+    color: inherit;
 }
 
-.consent-text a {
-    color: #007bff; /* Highlight link with blue */
-    text-decoration: underline; /* Make the link noticeable */
-    font-size: inherit; /* Keep font size consistent */
+/* Адаптивность для небольших экранов */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%; /* Используем почти всю ширину экрана */
+        max-width: 500px; /* Для узких экранов */
+        height: auto;
+        max-height: 90vh; /* Подстраиваем высоту */
+        padding: 10px;
+    }
+
+    .modal-header {
+        font-size: 16px; /* Чуть крупнее для мобильных */
+    }
+
+    .modal-content input {
+        font-size: 14px; /* Увеличиваем для читаемости */
+        padding: 10px;
+    }
+
+    .modal-content button {
+        padding: 12px 20px; /* Увеличиваем кнопку на мобильных */
+        font-size: 16px;
+    }
+
+    .btn-close {
+        top: 5px;
+        right: 5px;
+        height: 20px;
+        width: 20px;
+    }
+
+    .consent-text {
+        font-size: 14px;
+    }
 }

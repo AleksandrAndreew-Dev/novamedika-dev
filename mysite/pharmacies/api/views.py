@@ -23,6 +23,7 @@ class ProductDetailView(generics.RetrieveAPIView):
 
 from datetime import datetime
 
+
 def convert_date_format(date_string):
     """
     Convert DD.MM.YYYY format to YYYY-MM-DD format.
@@ -33,10 +34,63 @@ def convert_date_format(date_string):
         raise ValueError(f"Invalid date format: {date_string}")
 
 
+import re
+def parse_product_details(product_string):
+    # Ключевые слова для лекарственных средств
+
+
+    # Базовые ключевые слова для формы
+    form_keywords = [
+        'АМП', 'ТАБЛ', 'ТАБЛ.', 'ТАБЛ,', 'ТАБЛ', 'ТАБЛ.П/О', 'ТАБЛ.РАСТВ.', 'МАЗЬ',
+        'СУПП', 'ГЕЛЬ', 'КАПЛИ', 'ФЛ', 'Р-Р', 'ТУБА', 'капс',
+        'уп', 'паста', 'пак', 'пак.,', 'пак.', 'пор', 'пор.', 'жев.табл', 'жев.табл.',
+        'фильтр-пакет', 'фильтр-пакет,', 'табл.шип', 'ТАБЛ.РАССАС',
+        'конт', 'крем', 'табл.жев', 'драже', 'ф-кап', 'крем', 'линим',
+        'капс.рект', 'фл.,', 'супп.ваг',  'саше', 'пастилки',
+    ]
+
+    # Проверить, начинается ли строка с ключевого слова формы
+    first_word = product_string.split()[0]
+    if first_word.strip().upper() in {keyword.upper() for keyword in form_keywords}:
+        # Вернуть строку без изменений, если она начинается с ключевого слова формы
+        return product_string, "-"
+
+    # Скомпилировать регулярное выражение для формы
+    form_regex = re.compile(
+        r'^(' + '|'.join(re.escape(keyword) for keyword in form_keywords) + r')[\s\.,]*$', re.IGNORECASE
+    )
+
+    parts = product_string.split()
+    name_parts = []
+    form_parts = []
+    is_form = False
+
+    for part in parts:
+        # Проверка, соответствует ли текущая часть ключевым словам формы
+        if form_regex.match(part) or is_form:
+            is_form = True
+            form_parts.append(part)
+        else:
+            name_parts.append(part)
+
+    # Если вся строка является названием
+    name = " ".join(name_parts).strip()
+    form = " ".join(form_parts).strip()
+    return name, form
+
+
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
 @permission_classes([AllowAny])
-def upload_csv(request, slug):
+def upload_csv(request, pharmacy_name, pharmacy_number):
+
+    valid_pharmacies_names = {
+        'novamedika': 'Новамедика',
+        'ekliniya': 'Эклиния'
+    }
+    normalized_pharmacy_name = valid_pharmacies_names.get(pharmacy_name)
+    if not normalized_pharmacy_name:
+        return JsonResponse({'error': 'Invalid pharmacy_name provided'}, status=400)
     """
     Endpoint to upload a CSV file without headers and add products to the database.
     """
@@ -47,9 +101,6 @@ def upload_csv(request, slug):
     try:
         # Decode the file
         raw_data = file.read()
-
-
-
 
         result = chardet.detect(raw_data)
         encoding = result['encoding']
@@ -72,16 +123,22 @@ def upload_csv(request, slug):
             try:
                 # Map row data to field names
                 row_data = dict(zip(fieldnames, row))
-                print(f"Row data: {row_data}")
+
                 row_data['expiry_date'] = convert_date_format(row_data['expiry_date'])
                 row_data['import_date'] = convert_date_format(row_data['import_date'])
 
-                # Validate pharmacy
+                # Проверяем, является ли строка "лекарственным средством"
 
-                pharmacy = Pharmacy.objects.get(slug=slug)
+                name, form = parse_product_details(row_data['name'])
+
+
+                pharmacy, created = Pharmacy.objects.get_or_create(
+                    name=normalized_pharmacy_name, pharmacy_number=pharmacy_number)
+
                 # Create and save product
                 product = Product.objects.create(
-                    name=row_data['name'],
+                    name=name,
+                    form=form,
                     manufacturer=row_data['manufacturer'],
                     country=row_data['country'],
                     serial=row_data['serial'],
@@ -98,6 +155,7 @@ def upload_csv(request, slug):
                     internal_id=row_data['internal_id'],
                     pharmacy=pharmacy
                 )
+
                 product.save()
                 created_count += 1
             except Pharmacy.DoesNotExist:

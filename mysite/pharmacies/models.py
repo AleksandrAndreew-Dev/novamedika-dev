@@ -6,7 +6,7 @@ from django.utils.text import slugify
 
 class Pharmacy(models.Model):
     name = models.CharField(max_length=30, blank=True, null=True)
-    pharmacy_number = models.CharField(max_length=100)  # Код аптеки
+    pharmacy_number = models.CharField(max_length=100, blank=True, null=True)  # Код аптеки
     city = models.CharField(max_length=30, blank=True, null=True)  # Эти поля можно заполнить позже
     address = models.CharField(max_length=255, blank=True, null=True)  # Эти поля можно заполнить позже
     phone = models.CharField(max_length=20, blank=True, null=True)  # Эти поля можно заполнить позже
@@ -14,24 +14,41 @@ class Pharmacy(models.Model):
     slug = models.SlugField(unique=True, blank=True, null=True, max_length=150)
 
     def __str__(self):
-        return f"{self.name}{self.pharmacy_number}"
+        return f"{self.name} №{self.pharmacy_number}"
 
     def get_absolute_url(self):
         return reverse('pharmacies:pharmacy_detail', args=[self.name, self.pharmacy_number])
 
     def save(self, *args, **kwargs):
-        # Create a slug using name and pharmacy_number if not already set
+
+        # Automatically generate a slug if not set
         if not self.slug:
-            self.slug = slugify(f"{self.name}-{self.pharmacy_number}")
+
+            base_slug = slugify(f"{self.name}-{self.pharmacy_number}")
+            unique_slug = base_slug
+            counter = 1
+
+            # Ensure the slug is unique by appending a counter if necessary
+            while Pharmacy.objects.filter(slug=unique_slug).exists():
+
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = unique_slug
+
         super().save(*args, **kwargs)
 
     class Meta:
+        indexes = [
+        models.Index(fields=['slug']),
+    ]
         verbose_name = 'Pharmacy'
         verbose_name_plural = 'Pharmacies'
 
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
+    form = models.CharField(max_length=255)
     manufacturer = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     serial = models.CharField(max_length=255)

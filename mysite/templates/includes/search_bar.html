@@ -1,24 +1,29 @@
 {% load static %}
 
-
 <div id="search-form-div" class="search-form">
+    <form id="sform" class="form-control flex" method="get" action="{% url 'pharmacies:search_products' %}">
+        <div class="left-leaf">
+            <img src="{% static 'images/logo/left-list.png' %}">
+        </div>
 
-    <h2  class="logo-text"><span class="fletter">Н</span>ова<span class="fletter">М</span>едика  </h2>
- <span class="logo-text2">Сеть Аптек</span>
-
-    <form id="sform" class="form-control flex" method="get" action="search">
-         <img class="left-list" src="{% static 'images/logo/left-list.png' %}">
-        <label class="form-label" for="city-select">Выберите город</label>
+        <!-- Search by city -->
+        <label class="form-label" for="city-select"> Выберите город</label>
         <select name="city" id="city-select" class="form-select">
             <option value="">Все города</option>
             {% for city in unique_cities %}
-                <option value="{{ city.city }}" {% if city.is_selected %}selected{% endif %}>{{ city.city }}</option>
+              <option value="{{ city.city }}" {% if city.is_selected %}selected{% endif %}>{{ city.city }}</option>
             {% endfor %}
         </select>
-        <input type="text" id="id_q" name="q" class="form-control search-input-text"
-               placeholder="Введите название, например анальгин" value="{{ request.GET.q }}">
-        <button type="submit" class="search-button">Искать</button>
-        <img class="right-list" src="{% static 'images/logo/right-list.png' %}">
-    </form>
 
+        <!-- Search by product name -->
+        <input type="text" id="id_q" name="name" class="form-control search-input-text"
+               placeholder="Введите название лекарства, например анальгин" value="{{ query }}">
+
+
+        <button type="submit" class="search-button">Искать</button>
+
+        <div class="right-leaf">
+            <img src="{% static 'images/logo/right-list.png' %}">
+        </div>
+    </form>
 </div>

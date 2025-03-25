@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-ra$t@20rzvfty#$gl$=(m46e!-o934q($a*n&gs*&3#4crnzxq
 ALLOWED_HOSTS = ['*']
 
 
-DEBUG = True
+DEBUG = False
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'  # Replace with your Redis or RabbitMQ URL
 CELERY_ACCEPT_CONTENT = ['json']
@@ -39,7 +39,7 @@ CELERY_TASK_SERIALIZER = 'json'
 SITE_ID = 1
 
 INSTALLED_APPS = [
-'channels',
+
     'mysite',
     'pharmacies',
     'daphne',
@@ -53,11 +53,11 @@ INSTALLED_APPS = [
     'taggit',
     'django.contrib.sites',
     'django.contrib.sitemaps',
-    'django.contrib.postgres',
+
 
 ]
 
-ASGI_APPLICATION = 'mysite.asgi.application'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -96,12 +96,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'novamedika',
-        'USER': 'novamedika',
-        'PASSWORD': 'novamedika',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'SuSummertimeSadn$default',
+        'USER': 'SuSummertimeSadn',
+        'PASSWORD': '8044aleksandr',
+        'HOST': 'SuSummertimeSadness.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
     }
 }
 
@@ -129,12 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_HOST_USER = 'aleksandrandrph@gmail.com'
-EMAIL_HOST_PASSWORD = '80444684198Aa'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -152,10 +147,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATIC_ROOT = BASE_DIR / 'static'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
