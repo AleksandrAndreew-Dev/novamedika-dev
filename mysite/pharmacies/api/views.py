@@ -78,12 +78,14 @@ def parse_product_details(product_string):
     form = " ".join(form_parts).strip()
     return name, form
 
-
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
 @permission_classes([AllowAny])
 def upload_csv(request, pharmacy_name, pharmacy_number):
-
+    """
+    Endpoint to upload a CSV file without headers and update products in the database.
+    Old records for the same pharmacy will be removed, and new ones will be added.
+    """
     valid_pharmacies_names = {
         'novamedika': 'Новамедика',
         'ekliniya': 'Эклиния'
@@ -91,9 +93,7 @@ def upload_csv(request, pharmacy_name, pharmacy_number):
     normalized_pharmacy_name = valid_pharmacies_names.get(pharmacy_name)
     if not normalized_pharmacy_name:
         return JsonResponse({'error': 'Invalid pharmacy_name provided'}, status=400)
-    """
-    Endpoint to upload a CSV file without headers and add products to the database.
-    """
+
     file = request.FILES.get('file')
     if not file:
         return JsonResponse({"error": "CSV file is required."}, status=400)
@@ -101,7 +101,6 @@ def upload_csv(request, pharmacy_name, pharmacy_number):
     try:
         # Decode the file
         raw_data = file.read()
-
         result = chardet.detect(raw_data)
         encoding = result['encoding']
         decoded_file = raw_data.decode(encoding).splitlines()
@@ -118,22 +117,27 @@ def upload_csv(request, pharmacy_name, pharmacy_number):
         reader = csv.reader(decoded_file, delimiter=';')
         created_count = 0
 
-        for row in reader:
+        # Remove old products for the specified pharmacy
+        pharmacy = Pharmacy.objects.filter(name=normalized_pharmacy_name, pharmacy_number=pharmacy_number).first()
+        if pharmacy:
+            Product.objects.filter(pharmacy=pharmacy).delete()
 
+        # Create or update pharmacy
+        pharmacy, created = Pharmacy.objects.get_or_create(
+            name=normalized_pharmacy_name, pharmacy_number=pharmacy_number
+        )
+
+        for row in reader:
             try:
                 # Map row data to field names
                 row_data = dict(zip(fieldnames, row))
 
+                # Convert date formats
                 row_data['expiry_date'] = convert_date_format(row_data['expiry_date'])
                 row_data['import_date'] = convert_date_format(row_data['import_date'])
 
-                # Проверяем, является ли строка "лекарственным средством"
-
+                # Parse product details
                 name, form = parse_product_details(row_data['name'])
-
-
-                pharmacy, created = Pharmacy.objects.get_or_create(
-                    name=normalized_pharmacy_name, pharmacy_number=pharmacy_number)
 
                 # Create and save product
                 product = Product.objects.create(
@@ -158,13 +162,13 @@ def upload_csv(request, pharmacy_name, pharmacy_number):
 
                 product.save()
                 created_count += 1
-            except Pharmacy.DoesNotExist:
-                print(f"Pharmacy not found for row: {row[:20]}")
+
             except Exception as e:
                 print(f"Error processing row: {row[:20]}, error: {e}")
 
-        return JsonResponse({"message": f"{created_count} products successfully added."}, status=201)
+        return JsonResponse({"message": f"{created_count} products successfully added after resetting the old ones."}, status=201)
 
     except Exception as e:
         print(f"Error processing file: {e}")
         return JsonResponse({"error": "Failed to process the file."}, status=500)
+

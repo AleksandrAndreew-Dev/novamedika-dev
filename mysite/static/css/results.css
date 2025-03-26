@@ -1,202 +1,189 @@
-/* Общий стиль таблицы */
-#product-table {
-    width: 80%;
+:root {
+    --primary-color: #007bff; /* Основной цвет */
+    --hover-color: #0056b3; /* Цвет при наведении */
+    --text-color: green; /* Основной цвет текста */
+    --secondary-text-color: black; /* Вторичный цвет текста */
+    --accent-color: orange; /* Акцентный цвет */
+    --background-color: #f8f9fa; /* Общий фон */
+    --border-radius: 16px; /* Радиус скругления */
+    --transition-speed: 0.3s; /* Плавность переходов */
 }
 
-.btn-choice {
- background-color: #59a5f7; /* Яркий голубой для привлечения внимания */
-    color: #ffffff; /* Белый текст для контраста */
-    border: none;
-    border-radius: 12px;
-    padding: 12px 16px; /* Увеличенные отступы */
-    cursor: pointer;
-    font-size: 16px; /* Увеличенный текст */
-    text-align: center;
-    font-weight: bold; /* Жирный текст для акцента */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Добавление тени */
+body {
+    font-family: 'Roboto', Arial, sans-serif; /* Профессиональный и современный шрифт */
+    color: var(--secondary-text-color); /* Цвет текста */
+    background-color: var(--background-color); /* Основной фон */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Избегаем горизонтальной прокрутки */
+    scroll-behavior: smooth; /* Плавный скроллинг */
 }
 
-.btn-choice:hover {
-    background-color: #317daf; /* Более насыщенный цвет при наведении */
-    transform: scale(1.1); /* Лёгкое увеличение кнопки */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Усиление тени */
-}
-
-.btn-choice:active {
-    background-color: #0056b3; /* Ещё темнее при нажатии */
-    transform: scale(0.95); /* Небольшое сжатие при нажатии */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Уменьшение тени */
-}
-
-}
-
-
-.results-table_wrapper {
-    display: flex;
-    flex-direction: column;
-    margin-top: 2%;
-    width: 100%; /* Заполнение доступного пространства */
-}
-
-.dataTables_filter {
-    margin: 3% 0 1% 0;
-}
-
-.dataTable {
+table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
-    text-align: left;
-    background-color: #f8fbfd; /* Почти белый с легким голубоватым оттенком */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f8fbfd; /* Почти белый с лёгким голубоватым оттенком */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Добавление теней */
 }
 
-/* Заголовок таблицы */
 table thead th {
     background-color: #b0d9f4; /* Голубой, приятный для глаз */
     color: #ffffff; /* Белый текст для контраста */
-    padding: 5px 10px;
-    border: 1px solid #9cc7e8; /* Лёгкая голубая граница */
-    text-align: center;
     font-weight: bold;
+    padding: 10px;
+    text-align: center;
 }
 
 table tbody tr:nth-child(even) {
-    background-color: #d9ecf8; /* Очень светлый голубой для четных строк */
+    background-color: #d9ecf8; /* Светлый голубой для четных строк */
 }
 
 table tbody tr:nth-child(odd) {
-    background-color: #f2f9fd; /* Почти белый, но чуть насыщеннее */
+    background-color: #f2f9fd; /* Почти белый */
 }
 
 table tbody tr:hover {
-    background-color: #c3e4f5; /* Насыщенный голубой при наведении */
-    transition: background-color 0.3s ease;
+    background-color: #c3e4f5; /* Бледный голубой при наведении */
+    transition: background-color var(--transition-speed) ease;
 }
 
-/* Ячейки таблицы */
 table td, table th {
-    padding: 5px 10px;
-    line-height: 1.5;
-    vertical-align: middle;
+    padding: 10px;
+    font-size: 14px;
+    line-height: 1.6;
 }
 
-/* Кнопка бронирования */
+/* Цены */
+table tbody tr td .pharma-price {
+    padding: 8px 12px; /* Удобные отступы */
+    background-color: #fdf7e3; /* Нежный кремовый тон */
+    border: 1px solid #e6dcbf; /* Гармоничная граница */
+    border-radius: var(--border-radius); /* Мягкие углы */
+    font-weight: 600; /* Акцент на тексте */
+    color: #5c4730; /* Контрастный текст */
+    font-size: 14px; /* Читаемый размер шрифта */
+    text-align: center; /* Центрирование текста */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+    white-space: nowrap; /* Отключаем перенос строк */
+    overflow: hidden; /* Обрезаем лишний текст */
+    text-overflow: ellipsis; /* Добавляем троеточие для длинных текстов */
+    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+
 .reserve-button {
-    background-color: #59a5f7; /* Яркий голубой для привлечения внимания */
-    color: #ffffff; /* Белый текст для контраста */
-    border: none;
-    border-radius: 12px;
-    padding: 12px 16px; /* Увеличенные отступы */
-    cursor: pointer;
-    font-size: 16px; /* Увеличенный текст */
-    text-align: center;
-    font-weight: bold; /* Жирный текст для акцента */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Добавление тени */
+    background-color: #59a5f7; /* Привлекательный голубой тон */
+    color: #ffffff; /* Контрастный белый текст */
+    border: none; /* Убираем границу */
+    border-radius: 16px; /* Мягкое скругление углов */
+    padding: 10px 20px; /* Удобные отступы */
+    font-size: 16px; /* Увеличенный размер текста */
+    font-weight: bold; /* Акцент на тексте */
+    text-align: center; /* Центрирование текста */
+    cursor: pointer; /* Указатель при наведении */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Лёгкая тень для выделения */
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .reserve-button:hover {
-    background-color: #317daf; /* Более насыщенный цвет при наведении */
-    transform: scale(1.1); /* Лёгкое увеличение кнопки */
+    background-color: #317daf; /* Насыщенный голубой при наведении */
+    transform: scale(1.05); /* Лёгкое увеличение кнопки */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Усиление тени */
 }
 
 .reserve-button:active {
-    background-color: #0056b3; /* Ещё темнее при нажатии */
-    transform: scale(0.95); /* Небольшое сжатие при нажатии */
+    background-color: #0056b3; /* Ещё более глубокий голубой при нажатии */
+    transform: scale(0.95); /* Лёгкое уменьшение при нажатии */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Уменьшение тени */
 }
 
-/* Сообщение о пустом результате */
-table tbody tr td[colspan] {
-    text-align: center;
-    font-style: italic;
-    color: #999;
-    padding: 20px;
+
+
+.btn-choice {
+    background-color: #59a5f7; /* Привлекательный голубой тон */
+    color: #ffffff; /* Контрастный белый текст */
+    border: none; /* Убираем границу */
+    border-radius: 16px; /* Мягкое скругление углов */
+    padding: 10px 20px; /* Удобные отступы */
+    font-size: 16px; /* Увеличенный размер текста */
+    font-weight: bold; /* Акцент на тексте */
+    text-align: center; /* Центрирование текста */
+    cursor: pointer; /* Указатель при наведении */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Лёгкая тень для выделения */
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Стили для пагинации */
-.dataTables_paginate a {
-    padding: 5px 10px;
-    text-decoration: none;
-    background-color: #f0f4f8; /* Светлый фон для пагинации */
-    color: #317daf; /* Голубоватый текст */
-    margin: 5px 10px;
-    transition: background-color 0.3s, color 0.3s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.dataTables_paginate a:hover {
+.btn-choice:hover {
     background-color: #317daf; /* Насыщенный голубой при наведении */
-    color: #ffffff; /* Белый текст для контраста */
+    transform: scale(1.05); /* Лёгкое увеличение кнопки */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Усиление тени */
 }
 
-table tbody tr td .pharma-price {
-padding: 4%;
-background-color: lightblue;
-border: 1px solid #ddd;
-border-radius: 30%;
+.btn-choice:active {
+    background-color: #0056b3; /* Ещё более глубокий голубой при нажатии */
+    transform: scale(0.95); /* Лёгкое уменьшение при нажатии */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Уменьшение тени */
 }
 
 table tbody tr td .sale-price {
-padding: 4%;
-background-color: lightgreen;
-border: 1px solid #ddd;
-border-radius: 30%;
+    padding: 8px 12px;
+    background-color: #edf9f0; /* Мягкий мятный тон */
+    border: 1px solid #c8e1c8; /* Светлая зелёная граница */
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    color: #3e6b3e; /* Контрастный зелёный текст */
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap; /* Отключаем перенос строк */
+    overflow: hidden; /* Обрезаем лишний текст */
+    text-overflow: ellipsis; /* Троеточие для избытка текста */
+    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
 }
 
-
+/* Эффекты при наведении */
+table tbody tr td .pharma-price:hover,
+table tbody tr td .sale-price:hover {
+    transform: scale(1.05); /* Лёгкое увеличение при наведении */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Усиление тени */
+}
 
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
-    .results-table_wrapper {
-        margin-top: 5%; /* Увеличиваем отступ сверху */
-    }
-
     table, table thead, table tbody, table th, table td {
-        display: block; /* Столбцы превращаются в строки */
-        width: 100%;
+        display: block;
+        width: 100%; /* Адаптация ширины */
     }
 
     table thead {
-        display: none; /* Прячем заголовок таблицы на маленьких экранах */
+        display: none; /* Скрываем заголовки на мобильных */
     }
 
     table tbody tr {
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
         border: 1px solid #ddd;
+        margin-bottom: 10px;
     }
 
     table tbody tr td {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-between; /* Выравнивание текста */
         padding: 10px;
         border-bottom: 1px solid #ddd;
     }
 
     table tbody tr td:last-child {
-        border-bottom: none; /* Убираем границу у последнего элемента */
+        border-bottom: none;
     }
 
-    .reserve-button {
-        font-size: 12px; /* Уменьшаем размер кнопки */
-        padding: 6px 8px;
+    table tbody tr td .pharma-price,
+    table tbody tr td .sale-price {
+        padding: 5px 8px; /* Ещё меньшее пространство для компактности */
+        font-size: 12px; /* Уменьшенный шрифт для малых экранов */
+        border-radius: 8px; /* Уменьшенные углы для мобильных */
+        box-shadow: none; /* Убираем тени на мобильных для минималистичного дизайна */
+        white-space: normal; /* Разрешаем перенос строк для узких экранов */
+        word-wrap: break-word; /* Перенос слов при необходимости */
+        text-align: left; /* Лёгкое смещение текста влево для удобства чтения */
     }
-
-    .dataTables_paginate a {
-        font-size: 12px; /* Уменьшаем размер текста пагинации */
-        padding: 5px;
-    }
-}
-
-.pharma-price {
-border: border: 1px solid #ddd;
-border-radius: 20%;
-
 }

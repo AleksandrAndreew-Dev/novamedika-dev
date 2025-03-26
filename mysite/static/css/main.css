@@ -46,7 +46,7 @@ margin-top: 2%;
 
 .left-leaf,
 .left-leaf img {
-left: 1%;
+left: 0;
 top: 0;
 display: flex;
 width: 16%;
@@ -69,8 +69,24 @@ position:absolute;
 
 .results-text {
 display: flex;
-margin: 3% 0;
+margin: 3% 0 1% 0;
 }
+
+.results-text2 {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: left;
+    align-content: flex-start;
+    font-size: 1.5em; /* Adjust the font size */
+    font-weight: bold; /* Make the text bold */
+    color: #007bff; /* Choose a color (e.g., blue) */
+    background-color: #f2f9fd; /* Optional: Light background */
+    padding: 2px 4px; /* Optional: Add some padding */
+    border-radius: 4px; /* Optional: Rounded edges */
+    text-transform: capitalize; /* Optional: Capitalize the text */
+    margin: 0 0 2% 0;
+}
+
 
 .footer ul {
 list-style-type: none;

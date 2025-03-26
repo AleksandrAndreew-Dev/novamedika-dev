@@ -10,13 +10,16 @@
 {% block results%}
 
 <div class="results container-lg">
-    <h4 class="results-text">Результаты поиска:</h4>
+    <h4 class="results-text">Результаты поиска: {{ group.name }} {{ group.form }}</h4>
     <table id="product-table" class="table-lg table-light-active align-middle">
         <thead>
             <tr class="table-light">
                 <th  scope="col">Название</th>
                 <th  scope="col">Форма</th>
-                <th  scope="col">Действие</th>
+                <th  scope="col">Производитель</th>
+                <th  scope="col">Страна</th>
+                <th  scope="col">Искать</th>
+
             </tr>
         </thead>
         <tbody>
@@ -24,6 +27,8 @@
             <tr class="table-light">
                 <td class="table-light">{{ group.name }}</td>
                 <td class="table-light">{{ group.form }}</td>
+                <td class="table-light">{{ group.manufacturer }}</td>
+                <td class="table-light">{{ group.country }}</td>
 
 
                 <td class="table-light">
@@ -36,6 +41,10 @@
                     </form>
                 </td>
             </tr>
+             {% empty %}
+    <tr>
+        <td colspan="12" class="text-center">Ничего не найдено</td>
+    </tr>
             {% endfor %}
         </tbody>
     </table>

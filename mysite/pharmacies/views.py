@@ -8,52 +8,54 @@ from .forms import ProductSearchForm
 from .models import Pharmacy, Product, Order
 from .tasks import order_created
 
+from django.db.models import Count
+from django.core.cache import cache
+
+
 def search_products(request):
     name_query = request.GET.get('name', '').strip()
     city_query = request.GET.get('city', '').strip()
 
-    # If both fields are empty, return an empty result set
+    # Если оба поля пусты, возвращаем пустой результат
     if not name_query and not city_query:
+        unique_cities = cache.get('unique_cities')
+        if not unique_cities:
+            unique_cities = list(Pharmacy.objects.values_list('city', flat=True).distinct().order_by('city'))
+            cache.set('unique_cities', unique_cities, 3600)  # Кэш на 1 час
         return render(request, 'pharmacies/search_products_results.html', {
-            'grouped_products': [],  # No results
-            'unique_cities': Pharmacy.objects.values('city').distinct().order_by('city'),
+            'grouped_products': [],  # Пустые результаты
+            'unique_cities': [{'city': c, 'is_selected': False} for c in unique_cities],
             'query': name_query,
-            'city_query': city_query
+            'city_query': city_query,
         })
 
-    # Start with all products and apply filters dynamically
+    # Загружаем и фильтруем продукты
     products = Product.objects.select_related('pharmacy').all()
 
     if name_query:
-        products = products.filter(name__icontains=name_query)  # Filter by name
+        products = products.filter(name__iexact=name_query)
     if city_query:
-        products = products.filter(pharmacy__city__icontains=city_query)  # Filter by city
+        products = products.filter(pharmacy__city__iexact=city_query)
 
-    # Group products by name, form, and pharmacy, while summing quantities
-   # Extract unique forms for products
-    unique_forms = {}
-    for product in products:
-        key = (product.name, product.form)  # Unique key for name and form
-        if key not in unique_forms:
-            unique_forms[key] = {
-                'name': product.name,
-                'form': product.form
-            }
-    # Convert unique forms to a list
-    unique_forms_list = list(unique_forms.values())
+    # Группируем продукты по имени и форме
+    grouped_products = (
+        products.values('name', 'form', 'manufacturer', 'country')
+        .annotate(count=Count('id'))
+        .order_by('name', 'form')
+    )
 
+    # Кэширование списка городов для фильтрации
+    unique_cities = cache.get('unique_cities')
+    if not unique_cities:
+        unique_cities = list(Pharmacy.objects.values_list('city', flat=True).distinct().order_by('city'))
+        cache.set('unique_cities', unique_cities, 3600)  # Кэш на 1 час
 
-    # Convert grouped products to a list for pagination
+    # Обработка выделенного города
+    unique_cities = [{'city': c, 'is_selected': (c == city_query)} for c in unique_cities]
 
-
-    # Fetch unique cities for the dropdown
-    unique_cities = Pharmacy.objects.values('city').distinct().order_by('city')
-    for city in unique_cities:
-        city['is_selected'] = (city['city'] == city_query)  # Ensure the selected city is marked
-
-    # Pass grouped data to the template
+    # Передаём сгруппированные данные в шаблон
     return render(request, 'pharmacies/search_products_results.html', {
-        'grouped_products': unique_forms_list,
+        'grouped_products': grouped_products,
         'unique_cities': unique_cities,
         'query': name_query,
         'city_query': city_query,
@@ -69,8 +71,8 @@ def search_pharmacies(request):
     if name and form:
         # Filter products by name, form, and pharmacy city
         pharmacies = Product.objects.filter(
-            name__icontains=name,
-            form__icontains=form,
+            name__iexact=name,
+            form__iexact=form,
             pharmacy__city__exact=city  # Add city filtering
         ).select_related('pharmacy')
 
@@ -80,6 +82,7 @@ def search_pharmacies(request):
         'selected_form': form,
         'selected_city': city,
     })
+
 
 def search(request):
     query = request.GET.get('name', '').strip()  # Search query for product name
@@ -162,39 +165,37 @@ def search(request):
 
 
 def index(request):
-    query = request.GET.get('name', '').strip()  # Search query for product name
-    city = request.GET.get('city', '').strip()  # Search query for city
+    query = request.GET.get('name', '').strip()  # Поиск по названию
+    city = request.GET.get('city', '').strip()  # Поиск по городу
     form = ProductSearchForm(request.GET or None)
 
-    # Filter products by name and city only
-    products = Product.objects.all()
+    # Кэширование списка городов
+    unique_cities = cache.get('unique_cities')
+    if not unique_cities:
+        unique_cities = list(Pharmacy.objects.values_list('city', flat=True).distinct().order_by('city'))
+        cache.set('unique_cities', unique_cities, 3600)  # Сохраняем в кэше на 1 час
+
+    # Обработка выбранного города для фильтрации
+    unique_cities = [{'city': c, 'is_selected': (c == city)} for c in unique_cities]
+
+    # Оптимизация запросов к базе данных
+    products = Product.objects.select_related('pharmacy').all()
     if query:
-        products = products.filter(name__icontains=query)  # Filter by name
+        products = products.filter(name__iexact=query)  # Фильтр по названию
     if city:
-        products = products.filter(pharmacy__city__icontains=city)  # Filter by city
+        products = products.filter(pharmacy__city__iexact=city)  # Фильтр по городу
 
-    # Group products by name and city
-    grouped_products = {}
-    for product in products:
-        key = (product.name, product.pharmacy.city)  # Group by name and city
-        if key not in grouped_products:
-            grouped_products[key] = {
-                'name': product.name,
-                'city': product.pharmacy.city,
-                'count': 1  # Count products grouped by name and city
-            }
-        else:
-            grouped_products[key]['count'] += 1
+    # Группировка продуктов на уровне базы данных
+    grouped_products = (
+        products.values('name', 'pharmacy__city')
+        .annotate(count=Count('id'))
+        .order_by('name', 'pharmacy__city')
+    )
 
-    # Paginate grouped products (10 products per page)
-    paginated_products = Paginator(list(grouped_products.values()), 10)
+    # Пагинация (10 записей на страницу)
+    paginated_products = Paginator(grouped_products, 10)
     page_number = request.GET.get('page')
     page_obj = paginated_products.get_page(page_number)
-
-    # Fetch unique cities for filtering
-    unique_cities = Pharmacy.objects.values('city').distinct().order_by('city')
-    for city_obj in unique_cities:
-        city_obj['is_selected'] = (city_obj['city'] == city)
 
     return render(request, 'pharmacies/index.html', {
         'form': form,

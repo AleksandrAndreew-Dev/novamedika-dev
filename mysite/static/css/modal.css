@@ -1,113 +1,165 @@
+:root {
+    --primary-color: #59a5f7; /* Основной голубой цвет */
+    --secondary-color: #317daf; /* Более насыщенный голубой */
+    --accent-color: #004080; /* Акцентный синий */
+    --error-color: #e57373; /* Цвет ошибок/закрытия */
+    --error-color-hover: #d32f2f; /* Насыщенный красный при наведении */
+    --neutral-color: #f0f8ff; /* Светло-голубой фон */
+    --neutral-border: #aacfe3; /* Голубая граница */
+    --text-color: #333; /* Основной цвет текста */
+    --subtle-text: #888; /* Бледный текст */
+    --border-radius: 8px; /* Радиус скруглений */
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Тень */
+    --transition-speed: 0.3s ease; /* Плавность переходов */
+}
+
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    color: var(--text-color);
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Общий стиль модального окна */
 .modal-content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    font-size: 12px;
-    background-color: #f0f8ff; /* Светло-голубой фон для спокойного дизайна */
+    font-size: 14px;
+    background-color: var(--neutral-color);
     margin: 5px;
-    padding: 10px;
-    border: 1px solid #aacfe3; /* Голубая граница */
-    width: 90%; /* Для адаптивности (занимает 90% ширины экрана) */
-    max-width: 600px; /* Ограничение максимальной ширины */
-    height: auto; /* Высота подстраивается под содержимое */
-    max-height: 80vh; /* Не выходит за пределы экрана */
+    padding: 15px;
+    border: 1px solid var(--neutral-border);
+    width: 90%;
+    max-width: 600px;
+    height: auto;
+    max-height: 80vh;
     overflow-y: auto;
     box-sizing: border-box;
-    border-radius: 8px; /* Лёгкое скругление углов */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Мягкая тень */
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
 }
 
+/* Заголовок модального окна */
 .modal-header {
     width: 100%;
     position: relative;
-    font-size: 14px;
-    color: #004080; /* Насыщенный синий для заголовка */
+    font-size: 16px;
+    color: var(--accent-color);
     font-weight: bold;
     text-align: center;
     padding-bottom: 10px;
-    border-bottom: 1px solid #d1eaf3; /* Добавление разделителя */
+    border-bottom: 1px solid var(--neutral-border);
 }
 
+/* Поля ввода */
 .modal-content input {
     width: 100%;
-    padding: 8px; /* Увеличенные отступы для удобства */
-    border: 1px solid #aacfe3; /* Голубая граница */
-    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid var(--neutral-border);
+    border-radius: var(--border-radius);
     font-size: 14px;
     box-sizing: border-box;
     background-color: #ffffff;
     margin-bottom: 10px;
+    color: var(--text-color);
+    transition: border var(--transition-speed);
 }
 
+.modal-content input:focus {
+    border: 1px solid var(--primary-color);
+    outline: none;
+}
+
+/* Кнопка закрытия */
 .btn-close {
-    font-size: 14px;
+    font-size: 12px;
     position: absolute;
     top: 10px;
     right: 10px;
     display: flex;
     height: 25px;
     width: 25px;
-    background-color: #e57373; /* Мягкий красный для кнопки закрытия */
+    background-color: var(--error-color);
     color: white;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-speed);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
 .btn-close:hover {
     transform: scale(1.1);
+    background-color: var(--error-color-hover);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    background-color: #d32f2f; /* Более насыщенный красный при наведении */
 }
 
+/* Метки к полям */
 .modal-content label {
     font-weight: 600;
     font-size: 14px;
-    color: #004080; /* Цвет в той же гамме, что заголовок */
+    color: var(--accent-color);
     margin-bottom: 5px;
 }
 
+/* Кнопки действия */
 .modal-content button {
     align-self: flex-end;
-    padding: 10px 16px; /* Большие отступы для удобства */
-    background-color: #59a5f7; /* Яркий голубой акцент */
+    padding: 10px 16px;
+    background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
     margin-top: 10px;
 }
 
 .modal-content button:hover {
-    background-color: #317daf; /* Насыщенный голубой при наведении */
+    background-color: var(--secondary-color);
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Дополнительный текст */
 .modal-content .consent-text, .modal-content .confirmation-text {
     font-size: 14px;
-    color: #333;
+    color: var(--text-color);
     margin-top: 10px;
     line-height: 1.6;
 }
 
 .modal-content .consent-text a {
-    color: #007bff;
+    color: var(--primary-color);
     text-decoration: underline;
+    transition: color var(--transition-speed);
+}
+
+.modal-content .consent-text a:hover {
+    color: var(--hover-color);
+}
+
+/* Текстовая область */
+.modal-body p {
+    margin-bottom: 1%;
+}
+
+.modal-body span {
+    margin-left: 1%;
 }
 
 .consent-text {
     display: flex;
     align-items: center;
     font-size: 14px;
-    color: #333;
+    color: var(--text-color);
     gap: 10px;
     width: 100%;
 }
@@ -120,31 +172,30 @@
 
 .consent-text span {
     display: inline-block;
-    width: auto;
     color: inherit;
 }
 
-/* Адаптивность для небольших экранов */
+/* Адаптивность для мобильных экранов */
 @media (max-width: 768px) {
     .modal-content {
-        width: 95%; /* Используем почти всю ширину экрана */
-        max-width: 500px; /* Для узких экранов */
+        width: 95%;
+        max-width: 500px;
         height: auto;
-        max-height: 90vh; /* Подстраиваем высоту */
-        padding: 10px;
+        max-height: 90vh;
+        padding: 15px;
     }
 
     .modal-header {
-        font-size: 16px; /* Чуть крупнее для мобильных */
+        font-size: 16px;
     }
 
     .modal-content input {
-        font-size: 14px; /* Увеличиваем для читаемости */
+        font-size: 14px;
         padding: 10px;
     }
 
     .modal-content button {
-        padding: 12px 20px; /* Увеличиваем кнопку на мобильных */
+        padding: 12px 20px;
         font-size: 16px;
     }
 

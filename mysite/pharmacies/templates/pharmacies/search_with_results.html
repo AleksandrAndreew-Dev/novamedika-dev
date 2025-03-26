@@ -10,7 +10,9 @@
 
 <div class="results container-lg">
     {% if page_obj %}
-    <h4 class="results-text">Результаты поиска:</h4>
+    <h5 class="results-text">Результаты поиска:  </h5>
+    <span class='results-text2'>{{ query }} {{ form_query }}</span>
+
 
     <table id="results-table" class="table-sm table-light-active align-middle">
         <thead>
@@ -21,13 +23,13 @@
             <th scope="col">Телефон</th>
             <th scope="col">Название</th>
              <th scope="col">Форма</th>
-             <th scope="col">Цена в аптеке руб</th>
-            <th scope="col">Цена при бронировании он-лайн (руб)</th>
+             <th scope="col">Цена в аптеке бел.руб</th>
+            <th scope="col">Цена при бронировании он-лайн (бел.руб)</th>
 
             <th scope="col">Забронировать</th>
             <th scope="col">Количество в Аптеке</th>
-            <th scope="col">Производитель</th>
-            <th scope="col">Страна</th>
+            <th scope="col">Производитель, Страна</th>
+
 
 
         </tr>
@@ -58,9 +60,9 @@
                 Забронировать
             </button>
         </td>
-        <td class="table-light">{{ group.quantity }}</td> <!-- Total quantity -->
-        <td class="table-light">{{ group.manufacturer }}</td>
-        <td class="table-light">{{ group.country }}</td>
+        <td class="table-light">{{ group.quantity }} уп. Уточняйте кол-во в аптеке</td> <!-- Total quantity -->
+        <td class="table-light">{{ group.manufacturer }}, {{ group.country }}</td>
+
     </tr>
     {% empty %}
     <tr>
@@ -83,8 +85,10 @@
             </div>
             <div class="modal-body">
                 <!-- Вывод информации об аптеке -->
-                <p><strong>Вы бронируете:</strong> <span id="modal-product-name"></span> <span id="modal-product-form"></span>
-                    <span id="modal-product-price"></span></p>
+                <p><strong>Вы бронируете:</strong></p>
+                <p><span id="modal-product-name"></span> <span id="modal-product-form"></span></p>
+                <p><strong>По Цене:</strong>
+                <span id="modal-product-price"></span> бел. руб</p>
                 <p><strong>Аптека:</strong> <span id="modal-pharmacy-name"></span> №<span
                         id="modal-pharmacy-number"></span></p>
 
@@ -153,7 +157,7 @@
     if (!$.fn.dataTable.isDataTable('#results-table')) {
       var table = $('#results-table').DataTable({
           paging: true,
-          searching: true,
+          searching: false,
           ordering: true,
           pageLength: 10,
 
