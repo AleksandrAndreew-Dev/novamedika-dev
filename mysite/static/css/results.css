@@ -54,21 +54,7 @@ table td, table th {
 }
 
 /* Цены */
-table tbody tr td .pharma-price {
-    padding: 8px 12px; /* Удобные отступы */
-    background-color: #fdf7e3; /* Нежный кремовый тон */
-    border: 1px solid #e6dcbf; /* Гармоничная граница */
-    border-radius: var(--border-radius); /* Мягкие углы */
-    font-weight: 600; /* Акцент на тексте */
-    color: #5c4730; /* Контрастный текст */
-    font-size: 14px; /* Читаемый размер шрифта */
-    text-align: center; /* Центрирование текста */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
-    white-space: nowrap; /* Отключаем перенос строк */
-    overflow: hidden; /* Обрезаем лишний текст */
-    text-overflow: ellipsis; /* Добавляем троеточие для длинных текстов */
-    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
-}
+
 
 .reserve-button {
     background-color: #59a5f7; /* Привлекательный голубой тон */
@@ -124,13 +110,38 @@ table tbody tr td .pharma-price {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Уменьшение тени */
 }
 
+table tbody tr td .pharma-price {
+    padding: 8px 12px; /* Удобные отступы */
+    background-color: rgb(255, 183, 77);
+    border: 1px solid rgb(255, 153, 51);
+    color: rgb(102, 51, 0); /* Гармоничная граница */
+
+    border-radius: var(--border-radius); /* Мягкие углы */
+    font-weight: 600; /* Акцент на тексте */
+  /* Контрастный текст */
+    font-size: 14px; /* Читаемый размер шрифта */
+    text-align: center; /* Центрирование текста */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+    white-space: nowrap; /* Отключаем перенос строк */
+    overflow: hidden; /* Обрезаем лишний текст */
+    text-overflow: ellipsis; /* Добавляем троеточие для длинных текстов */
+    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+
+table tbody tr td .pharma-price:hover {
+    background-color: rgb(255, 204, 102);
+}
+
 table tbody tr td .sale-price {
     padding: 8px 12px;
-    background-color: #edf9f0; /* Мягкий мятный тон */
-    border: 1px solid #c8e1c8; /* Светлая зелёная граница */
+
+    background-color: rgb(144, 238, 144);
+    border: 1px solid rgb(85, 155, 85);
+    color: rgb(34, 77, 34);
+
     border-radius: var(--border-radius);
     font-weight: 600;
-    color: #3e6b3e; /* Контрастный зелёный текст */
+  Контрастный зелёный текст */
     font-size: 14px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -140,12 +151,25 @@ table tbody tr td .sale-price {
     transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
 }
 
+table tbody tr td .sale-price:hover {
+    background-color: rgb(173, 255, 173);
+}
+
 /* Эффекты при наведении */
 table tbody tr td .pharma-price:hover,
 table tbody tr td .sale-price:hover {
     transform: scale(1.05); /* Лёгкое увеличение при наведении */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Усиление тени */
 }
+
+
+
+.dataTables_paginate .paginate_button {
+
+    margin: 0 0.25%;
+}
+
+
 
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {

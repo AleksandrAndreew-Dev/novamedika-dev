@@ -11,7 +11,7 @@
 <div class="results container-lg">
     {% if page_obj %}
     <h5 class="results-text">Результаты поиска:  </h5>
-    <span class='results-text2'>{{ query }} {{ form_query }}</span>
+    <span class='results-text2'>{{ query }} {{ form_query }} -  {{ first_product.manufacturer }} {{ first_product.country }}</span>
 
 
     <table id="results-table" class="table-sm table-light-active align-middle">
@@ -52,6 +52,8 @@
                     data-product-name="{{ group.name }}"
                     data-product-form="{{ group.form }}"
                     data-product-price="{{ group.price }}"
+                     data-product-manufacturer="{{ group.manufacturer }}"
+                      data-product-country="{{ group.country }}"
                     data-pharmacy-name="{{ group.pharmacy_name }}"
                     data-pharmacy-number="{{ group.pharmacy_number }}"
                     data-pharmacy-city="{{ group.pharmacy_city }}"
@@ -86,13 +88,16 @@
             <div class="modal-body">
                 <!-- Вывод информации об аптеке -->
                 <p><strong>Вы бронируете:</strong></p>
-                <p><span id="modal-product-name"></span> <span id="modal-product-form"></span></p>
+                <p class=modal-product-name><span id="modal-product-name"></span> <span id="modal-product-form"></span></p>
+                <p><span id="modal-product-manufacturer"></span>, <span id="modal-product-country"></span></p>
                 <p><strong>По Цене:</strong>
                 <span id="modal-product-price"></span> бел. руб</p>
+                 <p><strong>Город:</strong> <span id="modal-pharmacy-city"></span></p>
+
                 <p><strong>Аптека:</strong> <span id="modal-pharmacy-name"></span> №<span
                         id="modal-pharmacy-number"></span></p>
 
-                <p><strong>Город:</strong> <span id="modal-pharmacy-city"></span></p>
+
                 <p><strong>Адрес:</strong> <span id="modal-pharmacy-address"></span></p>
                 <p><strong>Телефон:</strong> <span id="modal-pharmacy-phone"></span></p>
 
@@ -114,8 +119,7 @@
     </span>
                         </p>
                         <p>
-                            После нажатия кнопки «Забронировать», мы отправим Ваш запрос в аптеку и проинформируем Вас
-                            когда аптека получит заказ.
+                            Ваш запрос будет направлен в аптеку после нажатия кнопки «Забронировать». Мы уведомим Вас о подтверждении заказа.
                         </p>
                     </div>
                     <div class="mb-3">
@@ -179,6 +183,8 @@ $(document).on('click', '.reserve-button', function () {
   const productName = $(this).data('product-name');
    const productForm = $(this).data('product-form');
    const productPrice = $(this).data('product-price');
+    const productManufacturer = $(this).data('product-manufacturer');
+     const productCountry = $(this).data('product-country');
   const pharmacyName = $(this).data('pharmacy-name');
   const pharmacyNumber = $(this).data('pharmacy-number');
     const pharmacyCity = $(this).data('pharmacy-city');
@@ -189,6 +195,9 @@ $(document).on('click', '.reserve-button', function () {
   // Заполняем данные в модальное окно
    $('#modal-product-name').text(productName);
      $('#modal-product-form').text(productForm);
+     $('#modal-product-manufacturer').text(productManufacturer);
+     $('#modal-product-country').text(productCountry);
+
     $('#modal-product-price').text(productPrice);
   $('#modal-pharmacy-name').text(pharmacyName);
 

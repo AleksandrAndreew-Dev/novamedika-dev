@@ -153,6 +153,8 @@ def search(request):
     for form_obj in unique_forms:
         form_obj['is_selected'] = (form_obj['form'] == form_query)
 
+    first_product = grouped_products_list[0] if grouped_products_list else None
+
     # Render the search results template
     return render(request, 'pharmacies/search_with_results.html', {
         'page_obj': page_obj,
@@ -161,6 +163,7 @@ def search(request):
         'query': query,
         'city': city,
         'form_query': form_query,
+        'first_product': first_product,
     })
 
 
