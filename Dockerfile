@@ -1,36 +1,23 @@
-# Используем базовый образ Python
-FROM python:3.9-slim
+# Используем официальный образ Python
+FROM python:3.12-slim
 
-# Устанавливаем переменные окружения
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONBUFFERED=1
-ENV PYTHONPATH=/code
+# Устанавливаем рабочую директорию в контейнере
+WORKDIR /app
 
+# Копируем файлы проекта в контейнер
+COPY . /app
 
-# Устанавливаем рабочую директорию
-WORKDIR /code
-
-# Устанавливаем системные зависимости и обновляем pip
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    python3-dev \
-    nginx \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install --upgrade pip
-
-# Копируем файл с зависимостями
-COPY requirements.txt /code/
-
-# Устанавливаем зависимости Python
+# Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем проект
-COPY . /code/
+# Переключаемся в директорию проекта Django
+WORKDIR /app/mysite
 
-# Копируем конфигурацию Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+# Собираем статические файлы
+RUN python manage.py collectstatic --noinput
 
-# Команда запуска Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "mysite.wsgi:application"]
+# Открываем порт 8000
+EXPOSE 8000
 
+# Запускаем приложение с Gunicorn
+CMD ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:8000"]

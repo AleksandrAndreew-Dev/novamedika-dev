@@ -10,31 +10,131 @@ from .tasks import order_created
 
 from django.db.models import Count
 from django.core.cache import cache
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import Q
+from django.db.models import Func, Value
+
+
+
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl import connections
+
+# Подключение к Elasticsearch
+es = Elasticsearch(hosts=["http://elasticsearch:9200"])
+
+def index(request):
+    query = request.GET.get('name', '').strip()  # Поиск по названию
+    city = request.GET.get('city', '').strip()  # Поиск по городу
+    form = ProductSearchForm(request.GET or None)
+
+    # Кэширование списка городов
+    unique_cities = cache.get('unique_cities')
+    if not unique_cities:
+        unique_cities = list(Pharmacy.objects.values_list('city', flat=True).distinct().order_by('city'))
+        cache.set('unique_cities', unique_cities, 3600)  # Сохраняем в кэше на 1 час
+
+    unique_cities = [{'city': c, 'is_selected': (c == city)} for c in unique_cities]
+
+    # Оптимизация запросов к базе данных
+    products = Product.objects.select_related('pharmacy')
+
+    if query:
+        # Используем Elasticsearch для поиска по названию
+        body = {
+            "query": {
+                "bool": {
+                    "must": [  # Обе части запроса должны быть выполнены
+                        {
+                            "multi_match": {
+                                "query": query,  # Запрос, состоящий из двух слов
+                                "fields": ["name"],  # Поле, в котором осуществляется поиск
+                                "type": "bool_prefix",  # Использовать лучшее совпадение
+                                "fuzziness": "AUTO",  # Автоматический уровень нечеткости
+                                "operator": "and"  # Условие "и" для всех слов
+                            }
+                        }
+                    ],
+
+                }
+            }
+        }
+
+        # Выполняем запрос в Elasticsearch
+        response = es.search(index="products", body=body)
+
+        # Получаем IDs продуктов из результатов Elasticsearch
+        elastic_ids = [hit["_id"] for hit in response["hits"]["hits"]]
+
+        # Фильтруем продукты в Django по ID
+        products = products.filter(id__in=elastic_ids)
+
+    if city:
+        products = products.filter(pharmacy__city__iexact=city)  # Фильтр по городу
+
+    # Группировка продуктов на уровне базы данных
+    grouped_products = (
+        products.values('name', 'pharmacy__city')
+        .annotate(count=Count('id'))
+        .order_by('name', 'pharmacy__city')
+    )
+
+    # Пагинация (10 записей на страницу)
+    paginated_products = Paginator(grouped_products, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginated_products.get_page(page_number)
+
+    return render(request, 'pharmacies/index.html', {
+        'form': form,
+        'page_obj': page_obj,
+        'unique_cities': unique_cities,
+        'query': query,
+        'city': city,
+    })
+
+
+
+
 
 
 def search_products(request):
     name_query = request.GET.get('name', '').strip()
     city_query = request.GET.get('city', '').strip()
 
-    # Если оба поля пусты, возвращаем пустой результат
-    if not name_query and not city_query:
-        unique_cities = cache.get('unique_cities')
-        if not unique_cities:
-            unique_cities = list(Pharmacy.objects.values_list('city', flat=True).distinct().order_by('city'))
-            cache.set('unique_cities', unique_cities, 3600)  # Кэш на 1 час
-        return render(request, 'pharmacies/search_products_results.html', {
-            'grouped_products': [],  # Пустые результаты
-            'unique_cities': [{'city': c, 'is_selected': False} for c in unique_cities],
-            'query': name_query,
-            'city_query': city_query,
-        })
-
-    # Загружаем и фильтруем продукты
-    products = Product.objects.select_related('pharmacy').all()
-
     if name_query:
-        products = products.filter(name__iexact=name_query)
+        # Поиск в Elasticsearch для name_query с учетом опечаток
+        body = {
+            "query": {
+                "bool": {
+                    "must": [  # Обе части запроса должны быть выполнены
+                        {
+                            "multi_match": {
+                                "query": name_query,  # Запрос, состоящий из двух слов
+                                "fields": ["name"],  # Поле, в котором осуществляется поиск
+                                "type": "bool_prefix",  # Использовать лучшее совпадение
+                                "fuzziness": "AUTO",  # Автоматический уровень нечеткости
+                                "operator": "and"  # Условие "и" для всех слов
+                            }
+                        }
+                    ],
+
+                }
+            }
+        }
+
+        # Выполняем поиск в Elasticsearch
+        response = es.search(index="products", body=body)
+
+        # Получаем IDs из результатов Elasticsearch
+        elastic_ids = [hit["_id"] for hit in response["hits"]["hits"]]
+
+        # Получаем продукты из базы данных по найденным Elasticsearch ID
+        products = Product.objects.filter(id__in=elastic_ids)
+    else:
+        # Если name_query пустой, загружаем все продукты
+        products = Product.objects.all()
+
     if city_query:
+        # Фильтруем продукты по городу
         products = products.filter(pharmacy__city__iexact=city_query)
 
     # Группируем продукты по имени и форме
@@ -44,16 +144,12 @@ def search_products(request):
         .order_by('name', 'form')
     )
 
-    # Кэширование списка городов для фильтрации
-    unique_cities = cache.get('unique_cities')
-    if not unique_cities:
-        unique_cities = list(Pharmacy.objects.values_list('city', flat=True).distinct().order_by('city'))
-        cache.set('unique_cities', unique_cities, 3600)  # Кэш на 1 час
+    # Получаем список уникальных городов
+    unique_cities = Pharmacy.objects.values('city').distinct().order_by('city')
+    for city_obj in unique_cities:
+        city_obj['is_selected'] = (city_obj['city'] == city_query)
 
-    # Обработка выделенного города
-    unique_cities = [{'city': c, 'is_selected': (c == city_query)} for c in unique_cities]
-
-    # Передаём сгруппированные данные в шаблон
+    # Возвращаем данные в шаблон
     return render(request, 'pharmacies/search_products_results.html', {
         'grouped_products': grouped_products,
         'unique_cities': unique_cities,
@@ -70,6 +166,7 @@ def search_pharmacies(request):
     pharmacies = []
     if name and form:
         # Filter products by name, form, and pharmacy city
+
         pharmacies = Product.objects.filter(
             name__iexact=name,
             form__iexact=form,
@@ -90,10 +187,15 @@ def search(request):
     form_query = request.GET.get('form', '').strip()  # Filter by form
 
     # Filter products dynamically based on user input
-    products = Product.objects.select_related('pharmacy').all()  # Optimize with select_related
+    products = Product.objects.select_related('pharmacy').all()
 
     if query:
-        products = products.filter(name__icontains=query)
+        search_vector = SearchVector('name', config='russian')
+        search_query = SearchQuery(query, config='russian')
+        products = products.annotate(search=search_vector).filter(
+            Q(search=search_query) | Q(name__icontains=query)
+        )
+    #
     if form_query:
         products = products.filter(form__iexact=form_query)
     if city and city != 'Все города':  # Skip filtering if "Все города" is selected
@@ -164,48 +266,6 @@ def search(request):
         'city': city,
         'form_query': form_query,
         'first_product': first_product,
-    })
-
-
-def index(request):
-    query = request.GET.get('name', '').strip()  # Поиск по названию
-    city = request.GET.get('city', '').strip()  # Поиск по городу
-    form = ProductSearchForm(request.GET or None)
-
-    # Кэширование списка городов
-    unique_cities = cache.get('unique_cities')
-    if not unique_cities:
-        unique_cities = list(Pharmacy.objects.values_list('city', flat=True).distinct().order_by('city'))
-        cache.set('unique_cities', unique_cities, 3600)  # Сохраняем в кэше на 1 час
-
-    # Обработка выбранного города для фильтрации
-    unique_cities = [{'city': c, 'is_selected': (c == city)} for c in unique_cities]
-
-    # Оптимизация запросов к базе данных
-    products = Product.objects.select_related('pharmacy').all()
-    if query:
-        products = products.filter(name__iexact=query)  # Фильтр по названию
-    if city:
-        products = products.filter(pharmacy__city__iexact=city)  # Фильтр по городу
-
-    # Группировка продуктов на уровне базы данных
-    grouped_products = (
-        products.values('name', 'pharmacy__city')
-        .annotate(count=Count('id'))
-        .order_by('name', 'pharmacy__city')
-    )
-
-    # Пагинация (10 записей на страницу)
-    paginated_products = Paginator(grouped_products, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginated_products.get_page(page_number)
-
-    return render(request, 'pharmacies/index.html', {
-        'form': form,
-        'page_obj': page_obj,
-        'unique_cities': unique_cities,
-        'query': query,
-        'city': city,
     })
 
 

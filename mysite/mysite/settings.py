@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+from elasticsearch_dsl import connections  # Добавьте этот импорт
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,19 +21,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ra$t@20rzvfty#$gl$=(m46e!-o934q($a*n&gs*&3#4crnzxq'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'временно')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = 'localhost,127.0.0.1'.split(',')
 
 
-DEBUG = False
+DEBUG = True
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'  # Replace with your Redis or RabbitMQ URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': ['http://elasticsearch:9200'],  # Убедитесь, что Elasticsearch запущен на этом хосте и порте
+    },
+}
 
 
 # Application definition
@@ -53,6 +60,8 @@ INSTALLED_APPS = [
     'taggit',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'django_elasticsearch_dsl',
+
 
 
 ]
@@ -87,6 +96,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'mysite.asgi.application'
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
@@ -96,14 +106,20 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'SuSummertimeSadn$default',
-        'USER': 'SuSummertimeSadn',
-        'PASSWORD': '8044aleksandr',
-        'HOST': 'SuSummertimeSadness.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'novamedikapostgres',
+        'USER': 'novamedika',
+        'PASSWORD': 'novamedika',
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
+
+
+
+
+
+
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -147,7 +163,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Directory where static files will be collected (used in production)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Additional directories where Django will search for static files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 
 
 

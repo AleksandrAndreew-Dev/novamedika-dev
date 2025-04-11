@@ -1,6 +1,7 @@
 import csv
 
 import chardet
+from django.db import transaction
 from django.http import JsonResponse
 from pharmacies.api.serializers import ProductSerializer
 from pharmacies.models import Product, Pharmacy
@@ -78,6 +79,7 @@ def parse_product_details(product_string):
     form = " ".join(form_parts).strip()
     return name, form
 
+
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
 @permission_classes([AllowAny])
@@ -99,10 +101,10 @@ def upload_csv(request, pharmacy_name, pharmacy_number):
         return JsonResponse({"error": "CSV file is required."}, status=400)
 
     try:
-        # Decode the file
+        # Оптимизация чтения файла
         raw_data = file.read()
         result = chardet.detect(raw_data)
-        encoding = result['encoding']
+        encoding = result['encoding'] or 'utf-8'  # Fallback encoding
         decoded_file = raw_data.decode(encoding).splitlines()
 
         # Define field names manually since the CSV has no headers
@@ -115,58 +117,75 @@ def upload_csv(request, pharmacy_name, pharmacy_number):
 
         # Use csv.reader instead of csv.DictReader, then map manually
         reader = csv.reader(decoded_file, delimiter=';')
-        created_count = 0
 
-        # Remove old products for the specified pharmacy
-        pharmacy = Pharmacy.objects.filter(name=normalized_pharmacy_name, pharmacy_number=pharmacy_number).first()
-        if pharmacy:
-            Product.objects.filter(pharmacy=pharmacy).delete()
+        # Оптимизация: батчевая обработка и bulk_create
+        batch_size = 5000  # Оптимальный размер батча для вашей БД
+        products_batch = []
 
-        # Create or update pharmacy
-        pharmacy, created = Pharmacy.objects.get_or_create(
-            name=normalized_pharmacy_name, pharmacy_number=pharmacy_number
-        )
+        pharmacy = Pharmacy.objects.filter(
+            name=normalized_pharmacy_name,
+            pharmacy_number=pharmacy_number
+        ).first()
 
-        for row in reader:
-            try:
-                # Map row data to field names
-                row_data = dict(zip(fieldnames, row))
+        # Удаление старых записей в транзакции
+        with transaction.atomic():
+            if pharmacy:
+                Product.objects.filter(pharmacy=pharmacy).delete()
 
-                # Convert date formats
-                row_data['expiry_date'] = convert_date_format(row_data['expiry_date'])
-                row_data['import_date'] = convert_date_format(row_data['import_date'])
+            pharmacy, _ = Pharmacy.objects.get_or_create(
+                name=normalized_pharmacy_name,
+                pharmacy_number=pharmacy_number
+            )
 
-                # Parse product details
-                name, form = parse_product_details(row_data['name'])
+            for row in reader:
+                try:
+                    row_data = dict(zip(fieldnames, row))
 
-                # Create and save product
-                product = Product.objects.create(
-                    name=name,
-                    form=form,
-                    manufacturer=row_data['manufacturer'],
-                    country=row_data['country'],
-                    serial=row_data['serial'],
-                    price=row_data['price'],
-                    quantity=row_data['quantity'],
-                    total_price=row_data['total_price'],
-                    expiry_date=row_data['expiry_date'],
-                    category=row_data['category'],
-                    import_date=row_data['import_date'],
-                    internal_code=row_data['internal_code'],
-                    wholesale_price=row_data['wholesale_price'],
-                    retail_price=row_data['retail_price'],
-                    distributor=row_data['distributor'],
-                    internal_id=row_data['internal_id'],
-                    pharmacy=pharmacy
-                )
+                    # Конвертация дат
+                    row_data['expiry_date'] = convert_date_format(row_data['expiry_date'])
+                    row_data['import_date'] = convert_date_format(row_data['import_date'])
 
-                product.save()
-                created_count += 1
+                    # Обработка названия
+                    if row_data['category'] == 'Лексредства':
+                        name, form = parse_product_details(row_data['name'])
+                    else:
+                        name, form = row_data['name'], '-'
 
-            except Exception as e:
-                print(f"Error processing row: {row[:20]}, error: {e}")
+                    # Создание объекта без сохранения в БД
+                    product = Product(
+                        name=name,
+                        form=form,
+                        manufacturer=row_data['manufacturer'],
+                        country=row_data['country'],
+                        serial=row_data['serial'],
+                        price=row_data['price'],
+                        quantity=row_data['quantity'],
+                        total_price=row_data['total_price'],
+                        expiry_date=row_data['expiry_date'],
+                        category=row_data['category'],
+                        import_date=row_data['import_date'],
+                        internal_code=row_data['internal_code'],
+                        wholesale_price=row_data['wholesale_price'],
+                        retail_price=row_data['retail_price'],
+                        distributor=row_data['distributor'],
+                        internal_id=row_data['internal_id'],
+                        pharmacy=pharmacy
+                    )
+                    products_batch.append(product)
 
-        return JsonResponse({"message": f"{created_count} products successfully added after resetting the old ones."}, status=201)
+                    # Пакетное сохранение
+                    if len(products_batch) >= batch_size:
+                        Product.objects.bulk_create(products_batch)
+                        products_batch = []
+
+                except Exception as e:
+                    print(f"Error processing row: {row[:20]}, error: {e}")
+
+            # Сохранение оставшихся записей
+            if products_batch:
+                Product.objects.bulk_create(products_batch)
+
+        return JsonResponse({"message": f"Products successfully updated"}, status=201)
 
     except Exception as e:
         print(f"Error processing file: {e}")

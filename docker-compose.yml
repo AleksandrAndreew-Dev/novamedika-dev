@@ -1,63 +1,54 @@
-version: '3.8'
 
 services:
-  web:
-    build:
-      context: .
-    command: gunicorn --bind 0.0.0.0:8000 mysite.wsgi:application
-    restart: always
-    volumes:
-      - .:/code
+  app:
+    build: .
+    container_name: django_app
     ports:
       - "8000:8000"
     environment:
-      - DJANGO_SETTINGS_MODULE=mysite.settings
-      - PYTHONPATH=/code
+      DJANGO_DEBUG: 'True'
+    volumes:
+      - .:/app
+      - ./mysite/staticfiles:/app/mysite/staticfiles
     depends_on:
-      - rabbitmq
-      - celery_worker
+      - db
+      - elasticsearch  # Добавлен Elasticsearch
+
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: novamedika
+      POSTGRES_PASSWORD: novamedika
+      POSTGRES_DB: novamedikapostgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Для сохранения данных при перезапуске контейнера
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
 
   nginx:
     image: nginx:latest
+    container_name: nginx
     ports:
       - "80:80"
     volumes:
+      - ./mysite:/app/mysite
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./static:/code/static
+      - ./mysite/staticfiles:/static  # Доступ к статическим файлам
     depends_on:
-      - web
+      - app
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+volumes:
+  postgres_data:
 
-  celery_worker:
-    build:
-      context: .
-    command: celery -A mysite worker --loglevel=info
-    depends_on:
-      - rabbitmq
-    volumes:
-      - .:/code
-    environment:
-      DJANGO_SETTINGS_MODULE: mysite.settings.local
-      CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672/
-      CELERY_RESULT_BACKEND: rpc://
-
-  celery_beat:
-    build:
-      context: .
-    command: celery -A mysite beat --loglevel=info
-    depends_on:
-      - rabbitmq
-    volumes:
-      - .:/code
-    environment:
-      DJANGO_SETTINGS_MODULE: mysite.settings.local
-      CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672/
-      CELERY_RESULT_BACKEND: rpc://
