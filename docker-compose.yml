@@ -1,54 +1,63 @@
 
 services:
-  app:
+  web:
     build: .
-    container_name: django_app
-    ports:
-      - "8000:8000"
-    environment:
-      DJANGO_DEBUG: 'True'
     volumes:
-      - .:/app
-      - ./mysite/staticfiles:/app/mysite/staticfiles
+      - ./mysite:/app/mysite
+      - ./staticfiles:/app/mysite/staticfiles
+      - ./media:/app/mysite/media
+    environment:
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=mysite.settings
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_HOST=db
     depends_on:
+      - redis
       - db
-      - elasticsearch  # Добавлен Elasticsearch
+      - elasticsearch
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./staticfiles:/usr/share/nginx/static
+      - ./media:/usr/share/nginx/media
+    depends_on:
+      - web
 
   db:
     image: postgres:latest
-    container_name: postgres_db
     environment:
-      POSTGRES_USER: novamedika
-      POSTGRES_PASSWORD: novamedika
-      POSTGRES_DB: novamedikapostgres
-    ports:
-      - "5432:5432"
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Для сохранения данных при перезапуске контейнера
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
     environment:
       - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
-      - "9300:9300"
-
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./mysite:/app/mysite
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./mysite/staticfiles:/static  # Доступ к статическим файлам
-    depends_on:
-      - app
 
 volumes:
   postgres_data:
-
+  es_data:

@@ -1,0 +1,5 @@
+xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: true
+xpack.security.http.ssl.enabled: false  # Use `true` if HTTPS is required
+discovery.type: single-node
+

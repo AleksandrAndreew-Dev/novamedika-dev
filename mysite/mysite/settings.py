@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from elasticsearch_dsl import connections  # Добавьте этот импорт
-
+from elasticsearch import RequestsHttpConnection
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -25,11 +25,10 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'временно')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
+ALLOWED_HOSTS = ['86.107.197.38', 'localhost', '127.0.0.1', '37.45.167.236']
 
-ALLOWED_HOSTS = 'localhost,127.0.0.1'.split(',')
 
-
-DEBUG = True
+DEBUG = False
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'  # Replace with your Redis or RabbitMQ URL
 CELERY_ACCEPT_CONTENT = ['json']
@@ -37,9 +36,23 @@ CELERY_TASK_SERIALIZER = 'json'
 
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': ['http://elasticsearch:9200'],  # Убедитесь, что Elasticsearch запущен на этом хосте и порте
+        'hosts': [
+            {
+                'host': 'elasticsearch',
+                'port': 9200,
+                'http_auth': None,
+                'use_ssl': False,
+                'verify_certs': False,
+                'timeout': 60,
+            }
+        ],
+        'connection_class': RequestsHttpConnection,
     },
 }
+
+ELASTICSEARCH_HOSTS = ["https://localhost:9200"]
+ELASTICSEARCH_USERNAME = "elastic"
+ELASTICSEARCH_PASSWORD = "elastic"
 
 
 # Application definition
@@ -83,7 +96,9 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),
+	        os.path.join(BASE_DIR, 'mysite/pharmacies/templates'),  # Шаблоны приложения
+	],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -103,18 +118,16 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'novamedikapostgres',
-        'USER': 'novamedika',
-        'PASSWORD': 'novamedika',
-        'HOST': 'db',
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST', 'db'),
         'PORT': '5432',
     }
 }
-
 
 
 
@@ -163,15 +176,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# Directory where static files will be collected (used in production)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Additional directories where Django will search for static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Для collectstatic
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static'),  # Общая статика
+      # Статика приложения
 ]
 
+# Медиа-файлы
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Для кросс-оригинных заголовков (если нужно)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+CSRF_TRUSTED_ORIGINS = ['http://37.45.167.236']
 
 
 

@@ -1,23 +1,25 @@
-# Используем официальный образ Python
-FROM python:3.12-slim
-
-# Устанавливаем рабочую директорию в контейнере
+FROM python:3.10
 WORKDIR /app
 
-# Копируем файлы проекта в контейнер
-COPY . /app
+# Установка зависимостей
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Устанавливаем зависимости
+# Копируем зависимости и устанавливаем их
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Переключаемся в директорию проекта Django
-WORKDIR /app/mysite
+# Копируем проект
+COPY . .
+
+# Устанавливаем PYTHONPATH
+ENV PYTHONPATH=/app
 
 # Собираем статические файлы
+WORKDIR /app/mysite
 RUN python manage.py collectstatic --noinput
 
-# Открываем порт 8000
-EXPOSE 8000
-
-# Запускаем приложение с Gunicorn
-CMD ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Запускаем Gunicorn с абсолютным путем
+CMD ["gunicorn", "--timeout", "120", "--bind", "0.0.0.0:8000", "mysite.wsgi:application", "--chdir", "/app/mysite"]

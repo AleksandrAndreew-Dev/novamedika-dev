@@ -1,0 +1,173 @@
+:root {
+    --primary-color: #007bff; /* Основной цвет */
+    --hover-color: #0056b3; /* Цвет при наведении */
+    --text-color: green; /* Основной цвет текста */
+    --secondary-text-color: black; /* Вторичный цвет текста */
+    --accent-color: orange; /* Акцентный цвет */
+    --background-color: #f8f9fa; /* Общий фон */
+    --border-radius: 6px; /* Более мягкие скруглённые углы */
+    --transition-speed: 0.4s; /* Плавность переходов */
+    --placeholder-size-mobile: 0.8rem; /* Размер плейсхолдера на мобильных */
+    --placeholder-size-desktop: 1rem; /* Размер плейсхолдера на десктопах */
+}
+
+body {
+    font-family: 'Roboto', Arial, sans-serif; /* Профессиональный и современный шрифт */
+    color: var(--secondary-text-color); /* Цвет текста */
+    background-color: var(--background-color); /* Основной фон */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Избегаем горизонтальной прокрутки */
+    scroll-behavior: smooth; /* Плавный скроллинг */
+}
+
+/* Универсальные стили */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color var(--transition-speed) ease;
+}
+
+a:hover {
+    color: var(--hover-color);
+}
+
+/* Логотип */
+.logo-text2,
+.logo-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.logo-text2 {
+    color: var(--secondary-text-color);
+    margin-bottom: 3%;
+}
+
+.fletter {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+/* Форма поиска */
+form#sform {
+    display: flex; /* Flex-контейнер для формы */
+    flex-direction: row; /* Элементы в строку */
+    align-items: center; /* Центрирование по вертикали */
+    gap: 15px;
+    padding-left: 2.5%; /* Расстояние между элементами */
+    margin-bottom: 20px;
+    position: relative; /* Подготовка для позиционирования элементов */
+}
+
+.form-select,
+.search-input[type="text"],
+.search-button {
+    font-size: 14px; /* Стандартизированный размер шрифта */
+    padding: 0.6rem; /* Увеличенный внутренний отступ */
+    border: 1px solid #ced4da; /* Лёгкая граница */
+    border-radius: var(--border-radius); /* Более плавные скругления */
+    transition: all var(--transition-speed) ease;
+}
+
+.form-select {
+    width: 25%; /* Ширина списка */
+    margin-right: 2%;
+}
+
+.search-input {
+    flex: 1; /* Растягивается на всю доступную ширину */
+    width: 100%;
+}
+
+.search-input-text {
+    width: 100%; /* Полная ширина поля */
+    font-size: 14px; /* Размер текста в поле */
+    padding: 0.6rem; /* Удобные отступы */
+    border: 1px solid #ced4da; /* Лёгкая граница */
+    border-radius: 6px; /* Скругление углов */
+}
+
+.search-input-text::placeholder {
+    font-size: 0.9rem; /* Уменьшенный размер текста плейсхолдера */
+    color: #888; /* Нейтральный цвет */
+    opacity: 1; /* Полная видимость текста */
+}
+
+.search-button {
+    background-color: #59a5f7; /* Привлекательный голубой тон */
+    color: #ffffff; /* Контрастный белый текст */
+    border: none; /* Убираем границу */
+    border-radius: 16px; /* Мягкое скругление углов */
+    padding: 10px 20px; /* Удобные отступы */
+    font-size: 16px; /* Увеличенный размер текста */
+    font-weight: bold; /* Акцент на тексте */
+    text-align: center; /* Центрирование текста */
+    cursor: pointer; /* Указатель при наведении */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Лёгкая тень для выделения */
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #317daf; /* Насыщенный голубой при наведении */
+    transform: scale(1.05); /* Лёгкое увеличение кнопки */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Усиление тени */
+}
+
+.search-button:active {
+    background-color: #0056b3; /* Ещё более глубокий голубой при нажатии */
+    transform: scale(0.95); /* Лёгкое уменьшение при нажатии */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Уменьшение тени */
+}
+
+/* Состояние фокуса */
+.search-input:focus,
+.search-button:focus {
+    outline: 3px solid var(--primary-color); /* Выделение при фокусе */
+}
+
+/* Adaptive Design for Small Screens */
+@media (max-width: 768px) {
+
+    .left-leaf, .right-leaf {
+        display: none; /* Скрытие декоративных элементов на небольших экранах */
+    }
+
+    form#sform {
+        max-width: 100%; /* Установка ширины */
+        flex-direction: column; /* Элементы в колонку */
+        align-items: center; /* Центрирование по вертикали */
+        justify-content: center; /* Центрирование по горизонтали */
+        gap: 10px; /* Расстояние между элементами */
+    }
+
+    .search-button, .form-select, .search-input {
+        flex: none; /* Отключение гибкости */
+        width: 100%; /* Полная ширина элементов на мобильных устройствах */
+        margin: 5px 0; /* Отступы между элементами */
+    }
+
+    .search-button {
+        margin-top: 10px; /* Дополнительный отступ сверху */
+    }
+
+     .search-input-text {
+        font-size: 12px; /* Уменьшенный размер текста в поле */
+        padding: 0.5rem; /* Компактные отступы */
+    }
+
+    .search-input-text::placeholder {
+        font-size: 0.7rem; /* Ещё меньший размер текста плейсхолдера */
+        color: #aaa; /* Светлый серый для мобильных */
+    }
+}
