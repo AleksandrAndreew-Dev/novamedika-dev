@@ -1,4 +1,3 @@
-
 services:
   web:
     build: .
@@ -6,6 +5,7 @@ services:
       - ./mysite:/app/mysite
       - ./staticfiles:/app/mysite/staticfiles
       - ./media:/app/mysite/media
+      - ./temp_csv:/app/temp_csv
     environment:
       - PYTHONPATH=/app
       - DJANGO_SETTINGS_MODULE=mysite.settings
@@ -14,9 +14,14 @@ services:
       - POSTGRES_PASSWORD=mypassword
       - POSTGRES_HOST=db
     depends_on:
-      - redis
-      - db
-      - elasticsearch
+      elasticsearch-node-1:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
 
   nginx:
     image: nginx:latest
@@ -27,7 +32,8 @@ services:
       - ./staticfiles:/usr/share/nginx/static
       - ./media:/usr/share/nginx/media
     depends_on:
-      - web
+      web:
+        condition: service_started
 
   db:
     image: postgres:latest
@@ -42,22 +48,107 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    mem_limit: 512m
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  elasticsearch:
+  elasticsearch-node-1:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
     environment:
       - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - node.name=elasticsearch-node-1
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - gateway.auto_import_dangling_indices=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Reduced memory for better compatibility
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
-      - es_data:/usr/share/elasticsearch/data
+      - es_data_node1:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'" ]
+      interval: 30s
+      timeout: 120s
+      retries: 5
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=myuser
+      - RABBITMQ_DEFAULT_PASS=mypassword
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  celery_beat:
+    build: .
+    command: celery -A mysite beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    depends_on:
+      - redis
+      - rabbitmq
+      - db
+      - web
+    environment:
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=mysite.settings
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_HOST=db
+    volumes:
+          - ./media:/app/mysite/media
+          - ./temp_csv:/app/temp_csv
+
+  celery_worker:
+    build: .
+    command: celery -A mysite worker -l INFO -E --without-heartbeat --without-mingle --without-gossip
+    depends_on:
+      - redis
+      - rabbitmq
+      - db
+      - web
+    environment:
+      - CELERY_WORKER_SEND_TASK_EVENTS=1
+      - CELERY_TASK_SEND_SENT_EVENT=1
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=mysite.settings
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_HOST=db
+    volumes:
+      - ./media:/app/mysite/media
+      - ./temp_csv:/app/temp_csv
+
+
+  flower:
+    image: mher/flower
+
+    ports:
+      - "5555:5555"
+    environment:
+      - BROKER_URL=amqp://myuser:mypassword@rabbitmq:5672/
+      - FLOWER_BASIC_AUTH=user:password
+    depends_on:
+      - rabbitmq
+      - celery_worker
 
 volumes:
   postgres_data:
-  es_data:
+  es_data_node1:
+  rabbitmq_data:

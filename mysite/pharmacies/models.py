@@ -1,17 +1,24 @@
 from django.db import models
 from django.urls import reverse
+import uuid
 
 
-from django.utils.text import slugify
+
+
+
+
+
+
 
 class Pharmacy(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=30, blank=True, null=True)
     pharmacy_number = models.CharField(max_length=100, blank=True, null=True)  # Код аптеки
     city = models.CharField(max_length=30, blank=True, null=True)  # Эти поля можно заполнить позже
     address = models.CharField(max_length=255, blank=True, null=True)  # Эти поля можно заполнить позже
     phone = models.CharField(max_length=20, blank=True, null=True)  # Эти поля можно заполнить позже
     opening_hours = models.CharField(max_length=255, blank=True, null=True)  # Эти поля можно заполнить позже
-    slug = models.SlugField(unique=True, blank=True, null=True, max_length=150)
+
 
     def __str__(self):
         return f"{self.name} №{self.pharmacy_number}"
@@ -19,34 +26,16 @@ class Pharmacy(models.Model):
     def get_absolute_url(self):
         return reverse('pharmacies:pharmacy_detail', args=[self.name, self.pharmacy_number])
 
-    def save(self, *args, **kwargs):
 
-        # Automatically generate a slug if not set
-        if not self.slug:
-
-            base_slug = slugify(f"{self.name}-{self.pharmacy_number}")
-            unique_slug = base_slug
-            counter = 1
-
-            # Ensure the slug is unique by appending a counter if necessary
-            while Pharmacy.objects.filter(slug=unique_slug).exists():
-
-                unique_slug = f"{base_slug}-{counter}"
-                counter += 1
-
-            self.slug = unique_slug
-
-        super().save(*args, **kwargs)
 
     class Meta:
-        indexes = [
-        models.Index(fields=['slug']),
-    ]
+
         verbose_name = 'Pharmacy'
         verbose_name_plural = 'Pharmacies'
 
 
 class Product(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     form = models.CharField(max_length=255)
     manufacturer = models.CharField(max_length=255)
@@ -64,6 +53,7 @@ class Product(models.Model):
     distributor = models.CharField(max_length=255)
     internal_id = models.CharField(max_length=255)
     pharmacy = models.ForeignKey(Pharmacy, on_delete=models.CASCADE, related_name='products')
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         serials = self.serial.split(',')
@@ -77,6 +67,7 @@ class Product(models.Model):
 
 
 class Order(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_name = models.CharField(max_length=100)
     user_surname = models.CharField(max_length=100)
     user_phone = models.CharField(max_length=100)
@@ -91,3 +82,24 @@ class Order(models.Model):
         return (f"{self.pharmacy_name} {self.pharmacy_number}"
                 f"{self.user_name} {self.user_surname}"
                 f"{self.product_name} {self.product_price} {self.quantity}")
+
+
+
+
+class CsvProcessingTask(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    task_id = models.CharField(max_length=255, unique=True)
+    pharmacy_name = models.CharField(max_length=100)
+    pharmacy_number = models.CharField(max_length=50)
+    status = models.CharField(max_length=20, choices=[
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed')
+    ])
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    result = models.JSONField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'pharmacies_csvprocessingtask'

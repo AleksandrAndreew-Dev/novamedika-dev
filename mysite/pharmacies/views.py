@@ -20,7 +20,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl import connections
 
 # Подключение к Elasticsearch
-es = Elasticsearch(hosts=["http://elasticsearch:9200"])
+es = Elasticsearch(hosts=["http://elasticsearch-node-1:9200"])
 
 def index(request):
     query = request.GET.get('name', '').strip()  # Поиск по названию
@@ -66,7 +66,7 @@ def index(request):
         elastic_ids = [hit["_id"] for hit in response["hits"]["hits"]]
 
         # Фильтруем продукты в Django по ID
-        products = products.filter(id__in=elastic_ids)
+        products = products.filter(uuid__in=elastic_ids)
 
     if city:
         products = products.filter(pharmacy__city__iexact=city)  # Фильтр по городу
@@ -74,7 +74,7 @@ def index(request):
     # Группировка продуктов на уровне базы данных
     grouped_products = (
         products.values('name', 'pharmacy__city')
-        .annotate(count=Count('id'))
+        .annotate(count=Count('uuid'))
         .order_by('name', 'pharmacy__city')
     )
 
@@ -93,69 +93,89 @@ def index(request):
 
 
 
-
-
-
 def search_products(request):
     name_query = request.GET.get('name', '').strip()
     city_query = request.GET.get('city', '').strip()
 
-    if name_query:
-        # Поиск в Elasticsearch для name_query с учетом опечаток
-        body = {
-            "query": {
-                "bool": {
-                    "must": [  # Обе части запроса должны быть выполнены
-                        {
-                            "multi_match": {
-                                "query": name_query,  # Запрос, состоящий из двух слов
-                                "fields": ["name"],  # Поле, в котором осуществляется поиск
-                                "type": "bool_prefix",  # Использовать лучшее совпадение
-                                "fuzziness": "AUTO",  # Автоматический уровень нечеткости
-                                "operator": "and"  # Условие "и" для всех слов
-                            }
-                        }
-                    ],
-
-                }
+    body = {
+        "query": {
+            "bool": {
+                "must": [],
+                "filter": []
             }
         }
+    }
 
-        # Выполняем поиск в Elasticsearch
-        response = es.search(index="products", body=body)
-
-        # Получаем IDs из результатов Elasticsearch
-        elastic_ids = [hit["_id"] for hit in response["hits"]["hits"]]
-
-        # Получаем продукты из базы данных по найденным Elasticsearch ID
-        products = Product.objects.filter(id__in=elastic_ids)
-    else:
-        # Если name_query пустой, загружаем все продукты
-        products = Product.objects.all()
+    if name_query:
+        body["query"]["bool"]["must"].append({
+            "multi_match": {
+                "query": name_query,
+                "fields": ["name"],
+                "type": "bool_prefix",
+                "fuzziness": "AUTO",
+                "operator": "and"
+            }
+        })
 
     if city_query:
-        # Фильтруем продукты по городу
-        products = products.filter(pharmacy__city__iexact=city_query)
+        body["query"]["bool"]["filter"].append({
+            "match": {
+                "pharmacy.city": city_query  # Фильтрация по точному совпадению
+            }
+        })
 
-    # Группируем продукты по имени и форме
-    grouped_products = (
-        products.values('name', 'form', 'manufacturer', 'country')
-        .annotate(count=Count('id'))
-        .order_by('name', 'form')
-    )
+    body["_source"] = [
+        'name',
+        'form',
+        'manufacturer',
+        'country',
+        'price',
+        'quantity',
+        'pharmacy.city',
+        'pharmacy.name'
+    ]
 
-    # Получаем список уникальных городов
+    try:
+        response = es.search(index="products", body=body)
+        print(f"Elasticsearch response: {response}")
+    except Exception as e:
+        print(f"Ошибка запроса к Elasticsearch: {e}")
+        return render(request, 'pharmacies/error.html', {'message': 'Ошибка поиска'})
+
+    grouped_products = {}
+    for hit in response["hits"]["hits"]:
+        product = hit["_source"]
+        pharmacy_city = product.get("pharmacy", {}).get("city", "Unknown")
+        pharmacy_name = product.get("pharmacy", {}).get("name", "Unknown")
+
+        key = (product.get("name", "N/A"), product.get("form", "N/A"), product.get("manufacturer", "N/A"),
+               product.get("country", "N/A"))
+        if key not in grouped_products:
+            grouped_products[key] = {
+                "name": product.get("name", "N/A"),
+                "form": product.get("form", "N/A"),
+                "manufacturer": product.get("manufacturer", "N/A"),
+                "country": product.get("country", "N/A"),
+                "pharmacy_city": pharmacy_city,
+                "pharmacy_name": pharmacy_name,
+            }
+
+    grouped_products_list = list(grouped_products.values())
+    paginator = Paginator(grouped_products_list, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     unique_cities = Pharmacy.objects.values('city').distinct().order_by('city')
     for city_obj in unique_cities:
         city_obj['is_selected'] = (city_obj['city'] == city_query)
 
-    # Возвращаем данные в шаблон
     return render(request, 'pharmacies/search_products_results.html', {
-        'grouped_products': grouped_products,
+        'grouped_products': page_obj,
         'unique_cities': unique_cities,
         'query': name_query,
         'city_query': city_query,
     })
+
 
 
 def search_pharmacies(request):
@@ -308,3 +328,5 @@ def reserve(request):
         return HttpResponse("Ваш заказ отправлен! Ожидайте подтверждение от аптеки")
 
     return HttpResponse("Неверный запрос.")
+
+

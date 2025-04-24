@@ -10,8 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
-from pathlib import Path
-from elasticsearch_dsl import connections  # Добавьте этот импорт
+
 from elasticsearch import RequestsHttpConnection
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,35 +24,33 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'временно')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['86.107.197.38', 'localhost', '127.0.0.1', '37.45.167.236']
+ALLOWED_HOSTS = ['*']
 
+DEBUG = True
 
-DEBUG = False
+CELERY_BROKER_URL = 'amqp://myuser:mypassword@rabbitmq:5672/'  # Replace with your Redis or RabbitMQ URL
 
-CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'  # Replace with your Redis or RabbitMQ URL
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
+CELERY_WORKER_MAX_MEMORY_PER_CHILD = 500000  # 500MB
+CELERY_TASK_PROTOCOL = 2
+CELERY_ACKS_LATE = True
+
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': [
-            {
-                'host': 'elasticsearch',
-                'port': 9200,
-                'http_auth': None,
-                'use_ssl': False,
-                'verify_certs': False,
-                'timeout': 60,
-            }
-        ],
-        'connection_class': RequestsHttpConnection,
-    },
+        'hosts': ['elasticsearch-node-1:9200'],
+        'timeout': 60,
+    }
 }
 
-ELASTICSEARCH_HOSTS = ["https://localhost:9200"]
+
+ELASTICSEARCH_HOSTS = ["http://elasticsearch-node-1:9200"]
+
 ELASTICSEARCH_USERNAME = "elastic"
 ELASTICSEARCH_PASSWORD = "elastic"
-
 
 # Application definition
 SITE_ID = 1
@@ -74,12 +71,9 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.sitemaps',
     'django_elasticsearch_dsl',
-
-
+    'django_celery_beat',
 
 ]
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -97,8 +91,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates'),
-	        os.path.join(BASE_DIR, 'mysite/pharmacies/templates'),  # Шаблоны приложения
-	],
+                 os.path.join(BASE_DIR, 'mysite/pharmacies/templates'),  # Шаблоны приложения
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,7 +109,6 @@ ASGI_APPLICATION = 'mysite.asgi.application'
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 DATABASES = {
@@ -128,11 +121,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
-
-
-
-
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -157,9 +145,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -171,7 +156,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
@@ -179,20 +163,19 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Для collectstatic
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Общая статика
-      # Статика приложения
+    # Статика приложения
 ]
 
 # Медиа-файлы
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Для кросс-оригинных заголовков (если нужно)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = ['http://37.45.167.236']
-
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

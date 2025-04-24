@@ -1,5 +1,9 @@
-xpack.security.enabled: true
-xpack.security.transport.ssl.enabled: true
+xpack.security.enabled: false
+xpack.security.transport.ssl.enabled: false
 xpack.security.http.ssl.enabled: false  # Use `true` if HTTPS is required
-discovery.type: single-node
-
+network.host: 0.0.0.0
+http.port: 9200
+cluster.name: docker-cluster
+node.name: elasticsearch-node-1
+discovery.seed_hosts: ["elasticsearch-node-1"]
+cluster.initial_master_nodes: ["elasticsearch-node-1"]
