@@ -56,7 +56,8 @@ def index(request):
                     ],
 
                 }
-            }
+            },
+            "sort": [{"price": {"order": "asc"}}]
         }
 
         # Выполняем запрос в Elasticsearch
@@ -75,7 +76,7 @@ def index(request):
     grouped_products = (
         products.values('name', 'pharmacy__city')
         .annotate(count=Count('uuid'))
-        .order_by('name', 'pharmacy__city')
+        .order_by('name', 'pharmacy__city', 'price')
     )
 
     # Пагинация (10 записей на страницу)
@@ -207,7 +208,7 @@ def search(request):
     form_query = request.GET.get('form', '').strip()  # Filter by form
 
     # Filter products dynamically based on user input
-    products = Product.objects.select_related('pharmacy').all()
+    products = Product.objects.select_related('pharmacy').all().order_by('price')
 
     if query:
         search_vector = SearchVector('name', config='russian')

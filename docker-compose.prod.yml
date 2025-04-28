@@ -1,14 +1,22 @@
-
-
 services:
   web:
-    build: .
     env_file: .env
+    build: .
     volumes:
       - ./mysite:/app/mysite
       - ./staticfiles:/app/mysite/staticfiles
       - ./media:/app/mysite/media
       - ./temp_csv:/app/temp_csv
+    environment:
+      - DEBUG=${DEBUG_PROD}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS_PROD}
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=mysite.settings
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_HOST=db
+    ports: []
     depends_on:
       elasticsearch-node-1:
         condition: service_healthy
@@ -22,6 +30,10 @@ services:
   nginx:
     image: nginx:latest
     env_file: .env
+    environment:
+      - NGINX_HOST=${NGINX_HOST_PROD}
+    ports:
+      - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./staticfiles:/usr/share/nginx/static
@@ -32,12 +44,17 @@ services:
 
   db:
     image: postgres:latest
-    env_file: .env
+    environment:
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
+    ports:
+      - "6379:6379"
     mem_limit: 512m
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
@@ -52,13 +69,16 @@ services:
       - cluster.name=docker-cluster
       - node.name=elasticsearch-node-1
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - gateway.auto_import_dangling_indices=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Reduced memory for better compatibility
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
       - es_data_node1:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
     healthcheck:
       test: [ "CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'" ]
       interval: 30s
@@ -68,7 +88,12 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    env_file: .env
+    environment:
+      - RABBITMQ_DEFAULT_USER=myuser
+      - RABBITMQ_DEFAULT_PASS=mypassword
+    ports:
+      - "15672:15672"
+      - "5672:5672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -79,40 +104,53 @@ services:
 
   celery_beat:
     build: .
-    env_file: .env
     command: celery -A mysite beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
     depends_on:
       - redis
       - rabbitmq
       - db
       - web
+    environment:
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=mysite.settings
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_HOST=db
     volumes:
-      - ./media:/app/mysite/media
-      - ./temp_csv:/app/temp_csv
+          - ./media:/app/mysite/media
+          - ./temp_csv:/app/temp_csv
 
   celery_worker:
     build: .
-    env_file: .env
-    command:
-      - sh
-      - -c
-      - "sleep 10 && celery -A mysite worker -l INFO -E --without-heartbeat --without-mingle --without-gossip"
+    command: celery -A mysite worker -l INFO -E --without-heartbeat --without-mingle --without-gossip
     depends_on:
-      redis:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-      web:
-        condition: service_started
+      - redis
+      - rabbitmq
+      - db
+      - web
+    environment:
+      - CELERY_WORKER_SEND_TASK_EVENTS=1
+      - CELERY_TASK_SEND_SENT_EVENT=1
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=mysite.settings
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_HOST=db
     volumes:
       - ./media:/app/mysite/media
       - ./temp_csv:/app/temp_csv
 
+
   flower:
     image: mher/flower
-    env_file: .env
+
+    ports:
+      - "5555:5555"
+    environment:
+      - BROKER_URL=amqp://myuser:mypassword@rabbitmq:5672/
+      - FLOWER_BASIC_AUTH=user:password
     depends_on:
       - rabbitmq
       - celery_worker

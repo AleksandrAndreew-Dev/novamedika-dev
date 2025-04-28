@@ -182,6 +182,10 @@ def update_pharmacy_city_in_index(pharmacy_name, pharmacy_number):
     except Exception as e:
         return f"Error updating products: {str(e)}"
 
+def chunked(iterable, size):
+    """Разбивает итерируемый объект на чанки заданного размера."""
+    for i in range(0, len(iterable), size):
+        yield iterable[i:i + size]
 
 @shared_task
 def remove_pharmacy_products_from_index(pharmacy_uuid):
@@ -194,23 +198,30 @@ def remove_pharmacy_products_from_index(pharmacy_uuid):
 
     try:
         pharmacy = Pharmacy.objects.get(uuid=pharmacy_uuid)
-        product_uuids = list(pharmacy.products.values_list('uuid', flat=True))
 
-        if product_uuids:
-            chunk_size = 1000
-            for i in range(0, len(product_uuids), chunk_size):
-                chunk = product_uuids[i:i + chunk_size]
-                body = {
-                    "query": {
-                        "terms": {
-                            "_id": [str(uuid) for uuid in chunk]  # Преобразуем UUID в строки
-                        }
-                    }
-                }
-                es.delete_by_query(index=index_name, body=body)
-                es.indices.refresh(index=index_name)
+        # Используем итератор для больших наборов данных
+        product_uuids = pharmacy.products.values_list('uuid', flat=True).iterator()
 
-        return f"Removed {len(product_uuids)} products for pharmacy {pharmacy_uuid}"
+        chunk_size = 1000
+        actions = []
+
+        # Формируем bulk-запросы
+        for uuid_batch in chunked(product_uuids, chunk_size):
+            for uuid in uuid_batch:
+                actions.append({
+                    "_op_type": "delete",
+                    "_index": index_name,
+                    "_id": str(uuid)
+                })
+
+            # Отправляем batch удалений
+            helpers.bulk(es, actions)
+            actions.clear()  # Очищаем список для следующего batch
+
+        # Однократное обновление индекса
+        es.indices.refresh(index=index_name)
+        return f"Removed products for pharmacy {pharmacy_uuid}"
+
     except Pharmacy.DoesNotExist:
         return f"Pharmacy {pharmacy_uuid} not found"
 

@@ -21,8 +21,9 @@ class ProductDocument(Document):
     class Index:
         name = 'products'
         settings = {
-            'number_of_shards': 1,
-            'number_of_replicas': 0
+            'number_of_shards': 3,
+            'number_of_replicas': 1,
+            'refresh_interval': '30s'
         }
 
     class Django:
@@ -40,14 +41,15 @@ class ProductDocument(Document):
             "form": product.form,
             "manufacturer": product.manufacturer,
             "country": product.country,
-            "price": float(product.price),
-            "quantity": float(product.quantity),
-            "total_price": float(product.total_price),
-            "wholesale_price": float(product.wholesale_price),
-            "retail_price": float(product.retail_price),
+            "price": float(product.price) if product.price is not None else 0.0,
+            "quantity": float(product.quantity) if product.quantity is not None else 0.0,
+            "total_price": float(product.total_price) if product.total_price is not None else 0.0,
+            "wholesale_price": float(product.wholesale_price) if product.wholesale_price is not None else 0.0,
+            "retail_price": float(product.retail_price) if product.retail_price is not None else 0.0,
             "pharmacy": {
                 "name": product.pharmacy.name if product.pharmacy else "",
                 "pharmacy_number": str(product.pharmacy.pharmacy_number) if product.pharmacy else "",
                 "city": product.pharmacy.city if product.pharmacy else "",
             }
         }
+

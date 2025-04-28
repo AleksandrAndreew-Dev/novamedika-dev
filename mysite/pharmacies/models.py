@@ -9,7 +9,6 @@ import uuid
 
 
 
-
 class Pharmacy(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=30, blank=True, null=True)
@@ -17,7 +16,8 @@ class Pharmacy(models.Model):
     city = models.CharField(max_length=30, blank=True, null=True)  # Эти поля можно заполнить позже
     address = models.CharField(max_length=255, blank=True, null=True)  # Эти поля можно заполнить позже
     phone = models.CharField(max_length=20, blank=True, null=True)  # Эти поля можно заполнить позже
-    opening_hours = models.CharField(max_length=255, blank=True, null=True)  # Эти поля можно заполнить позже
+    opening_hours = models.CharField(max_length=255, blank=True, null=True)
+
 
 
     def __str__(self):
@@ -34,6 +34,8 @@ class Pharmacy(models.Model):
         verbose_name_plural = 'Pharmacies'
 
 
+
+
 class Product(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
@@ -41,18 +43,18 @@ class Product(models.Model):
     manufacturer = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     serial = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     quantity = models.DecimalField(max_digits=10, decimal_places=3)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     expiry_date = models.DateField()
     category = models.CharField(max_length=255)
-    import_date = models.DateField()
-    internal_code = models.CharField(max_length=255)
+    import_date = models.DateField(blank=True)
+    internal_code = models.CharField(max_length=255, null=True, blank=True)
     wholesale_price = models.DecimalField(max_digits=10, decimal_places=2)
-    retail_price = models.DecimalField(max_digits=10, decimal_places=2)
+    retail_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     distributor = models.CharField(max_length=255)
     internal_id = models.CharField(max_length=255)
-    pharmacy = models.ForeignKey(Pharmacy, on_delete=models.CASCADE, related_name='products')
+    pharmacy = models.ForeignKey('Pharmacy', on_delete=models.CASCADE, related_name='products')
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -64,6 +66,17 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'form', 'price', 'quantity', 'serial', 'pharmacy', 'expiry_date'],
+                name='unique_product'
+            )
+        ]
+        indexes = [
+            models.Index(fields=['name', 'serial']),
+            models.Index(fields=['expiry_date']),
+            models.Index(fields=['category']),
+        ]
 
 
 class Order(models.Model):
@@ -86,9 +99,10 @@ class Order(models.Model):
 
 
 
+
 class CsvProcessingTask(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    task_id = models.CharField(max_length=255, unique=True)
+    task_id = models.CharField(max_length=255, unique=True, db_index=True)
     pharmacy_name = models.CharField(max_length=100)
     pharmacy_number = models.CharField(max_length=50)
     status = models.CharField(max_length=20, choices=[
@@ -103,3 +117,6 @@ class CsvProcessingTask(models.Model):
 
     class Meta:
         db_table = 'pharmacies_csvprocessingtask'
+        indexes = [
+            models.Index(fields=['task_id']),
+        ]
