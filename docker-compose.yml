@@ -15,7 +15,7 @@ services:
       redis:
         condition: service_healthy
       db:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
 
