@@ -5,7 +5,12 @@ import uuid
 
 
 
+class TelegramSubscriber(models.Model):
+    chat_id = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Подписчик {self.chat_id}"
 
 
 
@@ -86,6 +91,7 @@ class Order(models.Model):
     user_phone = models.CharField(max_length=100)
     quantity = models.IntegerField()
     product_name = models.CharField(max_length=100)
+    product_form = models.CharField(max_length=100)
     product_price = models.DecimalField(max_digits=10, decimal_places=2)
     pharmacy_name = models.CharField(max_length=100)
     pharmacy_number = models.IntegerField()
@@ -94,7 +100,7 @@ class Order(models.Model):
     def __str__(self):
         return (f"{self.pharmacy_name} {self.pharmacy_number}"
                 f"{self.user_name} {self.user_surname}"
-                f"{self.product_name} {self.product_price} {self.quantity}")
+                f"{self.product_name} {self.product_form} {self.product_price} {self.quantity}")
 
 
 

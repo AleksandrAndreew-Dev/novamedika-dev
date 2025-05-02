@@ -6,6 +6,50 @@ from .documents import ProductDocument
 from elasticsearch.connection import RequestsHttpConnection
 
 
+
+
+import requests
+from django.core.cache import cache
+from django.conf import settings
+from .models import TelegramSubscriber
+
+@shared_task
+def check_telegram_updates():
+    last_offset = cache.get('telegram_last_offset', 0)
+
+    url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/getUpdates"
+    params = {
+        "offset": last_offset + 1,
+        "timeout": 30  # Long Polling (30 секунд)
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        data = response.json()
+        if not data["ok"]:
+            return
+
+        for update in data["result"]:
+            message = update.get("message", {})
+            chat_id = message.get("chat", {}).get("id")
+            command = message.get("text", "").lower()
+
+            if command == "/start":
+                TelegramSubscriber.objects.get_or_create(chat_id=chat_id)
+            elif command == "/stop":
+                TelegramSubscriber.objects.filter(chat_id=chat_id).delete()
+
+            last_offset = max(last_offset, update["update_id"])
+
+        cache.set('telegram_last_offset', last_offset)
+
+    except Exception as e:
+        print(f"Ошибка: {e}")
+
+
+
+
+
 es_client = Elasticsearch(
     hosts=["http://elasticsearch-node-1:9200"],
     http_auth=("elastic", "elastic"),
@@ -25,30 +69,39 @@ except Exception as e:
 
 @shared_task
 def order_created(order_uuid):
-    """
-    Asynchronous task to send an email notification when an order is created.
-    """
+    from .models import Order, TelegramSubscriber
+    import requests
+    from django.conf import settings
+
     try:
         order = Order.objects.get(uuid=order_uuid)
-        subject = f"Order Confirmation: #{order_uuid}"
         message = (
-            f"Dear {order.user_name} {order.user_surname},\n\n"
-            f"Thank you for your order!\n"
-            f"Product: {order.product_name}\n"
-            f"Price: {order.product_price}\n"
-            f"Quantity: {order.quantity}\n"
-            f"Pharmacy: {order.pharmacy_name} (#{order.pharmacy_number})\n\n"
-            f"Your order UUID is {order.uuid}. You will receive further updates soon."
+            f"🆕 *Новый заказ!*\n"
+            f"🔖 Номер: `{order.uuid}`\n"
+            f"👤 Клиент: {order.user_name} {order.user_surname}\n"
+            f"📱 Телефон: `{order.user_phone}`\n"
+            f"💊 Товар: {order.product_name} {order.product_form}\n"
+            f"💰 Цена: {order.product_price} ₸\n"
+            f"📦 Количество: {order.quantity}\n"
+            f"🏥 Аптека: {order.pharmacy_name} (#{order.pharmacy_number})"
         )
-        # mail_sent = send_mail(
-        #     subject,
-        #     message,
-        #     'admin@myshop.com',  # Replace with your "from" email address
-        #     [order.user_phone],  # Replace with the recipient's email
-        # )
-        print(subject, message)
+
+        subscribers = TelegramSubscriber.objects.all()
+        for sub in subscribers:
+            url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage"
+            payload = {
+                "chat_id": sub.chat_id,
+                "text": message,
+                "parse_mode": "Markdown"
+            }
+            try:
+                requests.post(url, json=payload)
+            except Exception as e:
+                print(f"Ошибка отправки: {e}")
+
     except Order.DoesNotExist:
         return False
+    return True
 
 
 @shared_task

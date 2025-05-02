@@ -314,17 +314,19 @@ def reserve(request):
         user_phone = request.POST.get('userPhone')
         quantity = request.POST.get('quantity')
         product_name = request.POST.get('productName')
+        product_form = request.POST.get('product_form')
         product_price = request.POST.get('productPrice')
         pharmacy_name = request.POST.get('pharmacyName')
         pharmacy_number = request.POST.get('pharmacyNumber')
         order = Order.objects.create(user_name=user_name, user_surname=user_surname,
                                      user_phone=user_phone, quantity=quantity,
                                      product_name=product_name,
+                                     product_form=product_form,
                                      product_price=product_price,
                                      pharmacy_name=pharmacy_name,
                                      pharmacy_number=pharmacy_number)
         order.save()
-        order_created.delay(order.id)
+        order_created.delay(str(order.uuid))
 
         return HttpResponse("Ваш заказ отправлен! Ожидайте подтверждение от аптеки")
 
