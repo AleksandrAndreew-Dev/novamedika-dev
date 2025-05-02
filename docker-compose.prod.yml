@@ -12,20 +12,23 @@ services:
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS_PROD}
       - PYTHONPATH=/app
       - DJANGO_SETTINGS_MODULE=mysite.settings
-      - POSTGRES_DB=mydatabase
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_HOST=db
-    ports: []
+    ports:
+      - "8000:8000"
     depends_on:
       elasticsearch-node-1:
         condition: service_healthy
       redis:
         condition: service_healthy
       db:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    networks:
+      - app_network
 
   nginx:
     image: nginx:latest
@@ -41,35 +44,48 @@ services:
     depends_on:
       web:
         condition: service_started
+    networks:
+      - app_network
 
   db:
     image: postgres:latest
     environment:
-      - POSTGRES_DB=mydatabase
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck: # <-- Добавьте эту секцию
-      test: [ "CMD-SHELL", "pg_isready -U myuser -d mydatabase" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app_network
 
   redis:
     image: redis:latest
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: redis-server --requirepass $${REDIS_PASSWORD}
     ports:
       - "6379:6379"
     mem_limit: 512m
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app_network
 
   elasticsearch-node-1:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
     environment:
+      - ELASTIC_USER=${ES_USER}
+      - ELASTIC_PASSWORD=${ES_PASSWORD}
+      - xpack.security.enabled=true
+      - xpack.security.authc.api_key.enabled=true
       - discovery.type=single-node
       - cluster.name=docker-cluster
       - node.name=elasticsearch-node-1
@@ -90,6 +106,8 @@ services:
       timeout: 120s
       retries: 5
     restart: unless-stopped
+    networks:
+      - app_network
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -106,6 +124,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+      - app_network
 
   celery_beat:
     build: .
@@ -118,13 +138,15 @@ services:
     environment:
       - PYTHONPATH=/app
       - DJANGO_SETTINGS_MODULE=mysite.settings
-      - POSTGRES_DB=mydatabase
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_HOST=db
     volumes:
-          - ./media:/app/mysite/media
-          - ./temp_csv:/app/temp_csv
+      - ./media:/app/mysite/media
+      - ./temp_csv:/app/temp_csv
+    networks:
+      - app_network
 
   celery_worker:
     build: .
@@ -139,28 +161,35 @@ services:
       - CELERY_TASK_SEND_SENT_EVENT=1
       - PYTHONPATH=/app
       - DJANGO_SETTINGS_MODULE=mysite.settings
-      - POSTGRES_DB=mydatabase
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_HOST=db
     volumes:
       - ./media:/app/mysite/media
       - ./temp_csv:/app/temp_csv
+    networks:
+      - app_network
 
 
   flower:
     image: mher/flower
-
     ports:
       - "5555:5555"
     environment:
-      - BROKER_URL=amqp://myuser:mypassword@rabbitmq:5672/
-      - FLOWER_BASIC_AUTH=user:password
+      - BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
+      - FLOWER_BASIC_AUTH=${FLOWER_BASIC_AUTH}
     depends_on:
       - rabbitmq
       - celery_worker
+    networks:
+      - app_network
 
 volumes:
   postgres_data:
   es_data_node1:
   rabbitmq_data:
+
+networks:
+  app_network:
+    driver: bridge

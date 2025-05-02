@@ -22,7 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
-TELEGRAM_BOT_TOKEN = '7824538299:AAE5QyDZcmTVtsFKzsbToDq3k36A2e8uWBU'
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -31,9 +32,9 @@ CSRF_TRUSTED_ORIGINS = [f"http://{os.getenv('NGINX_HOSTS', 'localhost')}"]
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-CELERY_BROKER_URL = 'amqp://myuser:mypassword@rabbitmq:5672/'  # Replace with your Redis or RabbitMQ URL
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
@@ -42,18 +43,22 @@ CELERY_WORKER_MAX_MEMORY_PER_CHILD = 500000  # 500MB
 CELERY_TASK_PROTOCOL = 2
 CELERY_ACKS_LATE = True
 
+ELASTICSEARCH_HOSTS = ["http://elasticsearch-node-1:9200"]
+
+ELASTICSEARCH_USERNAME = os.getenv("ES_USER")
+ELASTICSEARCH_PASSWORD = os.getenv("ES_PASSWORD")
+
 ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': ['elasticsearch-node-1:9200'],
-        'timeout': 60,
+    "default": {
+        "hosts": [{"host": "elasticsearch-node-1", "port": 9200, "scheme": "https"}],
+        "http_auth": (ELASTICSEARCH_USERNAME, ELASTICSEARCH_PASSWORD),
+        "timeout": 60,
+        "use_ssl": False,
+        "verify_certs": False,  # Для продакшена используйте True и валидные сертификаты
     }
 }
 
 
-ELASTICSEARCH_HOSTS = ["http://elasticsearch-node-1:9200"]
-
-ELASTICSEARCH_USERNAME = "elastic"
-ELASTICSEARCH_PASSWORD = "elastic"
 
 # Application definition
 SITE_ID = 1
