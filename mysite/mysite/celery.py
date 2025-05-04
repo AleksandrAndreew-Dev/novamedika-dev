@@ -17,6 +17,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'poll-telegram-every-10s': {
         'task': 'pharmacies.tasks.check_telegram_updates',
-        'schedule': 10.0,  # Каждые 10 секунд
+        'schedule': 300.0,  # Каждые 10 секунд
     },
 }

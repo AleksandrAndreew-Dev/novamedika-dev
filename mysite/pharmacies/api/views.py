@@ -15,7 +15,7 @@ from rest_framework import generics
 from rest_framework.decorators import api_view, parser_classes, permission_classes
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny
-
+from django.views.decorators.csrf import csrf_exempt
 from pharmacies.api.serializers import ProductSerializer
 from pharmacies.documents import ProductDocument
 from pharmacies.models import Product, Pharmacy, CsvProcessingTask

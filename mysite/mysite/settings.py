@@ -27,8 +27,16 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
-CSRF_TRUSTED_ORIGINS = [f"http://{os.getenv('NGINX_HOSTS', 'localhost')}"]
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
+#CSRF_TRUSTED_ORIGINS = [
+    #*[f"http://{host}" for host in os.getenv('NGINX_HOSTS', 'localhost').split(',')],
+   # *[f"https://{host}" for host in os.getenv('NGINX_HOSTS', 'localhost').split(',')],
+  #  "http://37.215.10.162", 
+ #   "https://37.215.10.162"
+#]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
@@ -45,13 +53,13 @@ CELERY_ACKS_LATE = True
 
 ELASTICSEARCH_HOSTS = ["http://elasticsearch-node-1:9200"]
 
-ELASTICSEARCH_USERNAME = os.getenv("ES_USER")
-ELASTICSEARCH_PASSWORD = os.getenv("ES_PASSWORD")
+ELASTICSEARCH_USERNAME = os.getenv("ELASTIC_USER")
+ELASTICSEARCH_PASSWORD = os.getenv("ELASTIC_PASSWORD")
 
 ELASTICSEARCH_DSL = {
     "default": {
-        "hosts": [{"host": "elasticsearch-node-1", "port": 9200, "scheme": "https"}],
-        "http_auth": (ELASTICSEARCH_USERNAME, ELASTICSEARCH_PASSWORD),
+        "hosts": [{"host": "elasticsearch-node-1", "port": 9200, "scheme": "http"}],
+        "http_auth": (os.getenv("ELASTIC_USER"), os.getenv("ELASTIC_PASSWORD")),
         "timeout": 60,
         "use_ssl": False,
         "verify_certs": False,  # Для продакшена используйте True и валидные сертификаты
@@ -132,9 +140,17 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.AllowAny',
     ]
 }
+
+
+
+#REST_FRAMEWORK = {
+#    'DEFAULT_PERMISSION_CLASSES': [
+ #       'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+  #  ]
+#}
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -180,7 +196,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Для кросс-оригинных заголовков (если нужно)
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = None
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 
