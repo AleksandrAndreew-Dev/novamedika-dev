@@ -81,7 +81,7 @@ def order_created(order_uuid):
             f"👤 Клиент: {order.user_name} {order.user_surname}\n"
             f"📱 Телефон: `{order.user_phone}`\n"
             f"💊 Товар: {order.product_name} {order.product_form}\n"
-            f"💰 Цена: {order.product_price} ₸\n"
+            f"💰 Цена: {order.product_price} руб.\n"
             f"📦 Количество: {order.quantity}\n"
             f"🏥 Аптека: {order.pharmacy_name} (#{order.pharmacy_number})"
         )
