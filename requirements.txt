@@ -1,6 +1,6 @@
 Django==5.0.6
 elasticsearch-dsl==7.4.1
-elasticsearch==7.17.0
+elasticsearch==7.17.12
 django-elasticsearch-dsl==7.2.2
 daphne==4.1.1
 channels==4.2.2

@@ -49,8 +49,6 @@ services:
   redis:
     image: redis:latest
     mem_limit: 512m
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
     command: redis-server --requirepass 'dsdasddcklod'
     healthcheck:
       test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]

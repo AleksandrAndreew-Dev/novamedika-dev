@@ -70,8 +70,6 @@ services:
 
   redis:
     image: redis:latest
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
     command: redis-server --requirepass 'dsdasddcklod'
     ports:
       - "6379:6379"
