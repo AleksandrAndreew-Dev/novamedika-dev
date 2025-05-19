@@ -32,6 +32,36 @@ table thead th {
     font-weight: bold;
     padding: 10px;
     text-align: center;
+    vertical-align: middle;
+}
+
+table td {
+    text-align: left;
+    vertical-align: middle;
+    padding: 10px 12px;
+    font-size: 12px; /* Уменьшенный размер шрифта */
+    line-height: 1.2;
+
+}
+
+#results-table td {
+    font-size: 15px; /* Специальный размер для таблицы результатов */
+}
+
+#product-table th,
+#product-table td {
+    text-align: left; /* Выравнивание влево */
+    padding-left: 15px; /* Отступ слева */
+}
+
+/* Для второй таблицы (search_with_results.html) */
+#results-table th:nth-child(6), /* 6-я колонка "Форма" */
+#results-table td:nth-child(6) {
+    min-width: 120px; /* Минимальная ширина */
+    max-width: 150px; /* Максимальная ширина */
+    white-space: normal; /* Разрешаем перенос */
+    word-break: break-word;
+    line-height: 1.4; /* Перенос длинных слов */
 }
 
 table tbody tr:nth-child(even) {
@@ -49,9 +79,21 @@ table tbody tr:hover {
 
 table td, table th {
     padding: 10px;
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1;
 }
+
+#results-table th:nth-child(1) { width: 12%; } /* Аптека */
+#results-table th:nth-child(2) { width: 8%; }  /* Город */
+#results-table th:nth-child(3) { width: 15%; } /* Адрес */
+#results-table th:nth-child(4) { width: 10%; } /* Телефон */
+#results-table th:nth-child(5) { width: 15%; } /* Название */
+#results-table th:nth-child(6) { width: 12%; } /* Форма */
+#results-table th:nth-child(7), 
+#results-table th:nth-child(8) { width: 9%; }  /* Цены */
+#results-table th:nth-child(9) { width: 10%; } /* Кнопка */
+#results-table th:nth-child(10) { width: 10%; } /* Количество */
+#results-table th:nth-child(11) { width: 12%; }
 
 /* Цены */
 
@@ -61,7 +103,7 @@ table td, table th {
     color: #ffffff; /* Контрастный белый текст */
     border: none; /* Убираем границу */
     border-radius: 16px; /* Мягкое скругление углов */
-    padding: 10px 20px; /* Удобные отступы */
+    padding: 10px 5px; /* Удобные отступы */
     font-size: 16px; /* Увеличенный размер текста */
     font-weight: bold; /* Акцент на тексте */
     text-align: center; /* Центрирование текста */
@@ -111,7 +153,7 @@ table td, table th {
 }
 
 table tbody tr td .pharma-price {
-    padding: 8px 12px; /* Удобные отступы */
+    padding: 8px 6px; /* Удобные отступы */
     background-color: rgb(255, 183, 77);
     border: 1px solid rgb(255, 153, 51);
     color: rgb(102, 51, 0); /* Гармоничная граница */
@@ -133,7 +175,7 @@ table tbody tr td .pharma-price:hover {
 }
 
 table tbody tr td .sale-price {
-    padding: 8px 12px;
+    padding: 8px 6px;
 
     background-color: rgb(144, 238, 144);
     border: 1px solid rgb(85, 155, 85);
@@ -141,7 +183,7 @@ table tbody tr td .sale-price {
 
     border-radius: var(--border-radius);
     font-weight: 600;
-  Контрастный зелёный текст */
+
     font-size: 14px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

@@ -22,8 +22,8 @@ class ProductDocument(Document):
         name = 'products'
         settings = {
             'number_of_shards': 3,
-            'number_of_replicas': 1,
-            'refresh_interval': '30s'
+            'number_of_replicas': 2,
+            'refresh_interval': '60s'
         }
 
     class Django:

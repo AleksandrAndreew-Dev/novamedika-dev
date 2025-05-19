@@ -178,7 +178,7 @@ body {
     width: 10px;  /* Ширина чекбокса */
     height: 10px; /* Высота чекбокса */
     transform: scale(1.5); /* Увеличивает размер */
-}}
+}
 
 .consent-text span {
     display: inline-block;

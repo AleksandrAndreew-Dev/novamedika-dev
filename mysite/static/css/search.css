@@ -63,7 +63,7 @@ a:hover {
 form#sform {
     display: flex; /* Flex-контейнер для формы */
     flex-direction: row; /* Элементы в строку */
-    align-items: center; /* Центрирование по вертикали */
+    align-items: flex-start; /* Центрирование по вертикали */
     gap: 15px;
     padding-left: 2.5%; /* Расстояние между элементами */
     margin-bottom: 20px;
