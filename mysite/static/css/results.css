@@ -129,16 +129,23 @@ table td, table th {
 .btn-choice {
     background-color: #59a5f7; /* Привлекательный голубой тон */
     color: #ffffff; /* Контрастный белый текст */
-    border: none; /* Убираем границу */
-    border-radius: 16px; /* Мягкое скругление углов */
-    padding: 10px 20px; /* Удобные отступы */
-    font-size: 16px; /* Увеличенный размер текста */
-    font-weight: bold; /* Акцент на тексте */
-    text-align: center; /* Центрирование текста */
-    cursor: pointer; /* Указатель при наведении */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Лёгкая тень для выделения */
+    border: none;
+    border-radius: 16px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+
+    display: flex; /* Делаем flex-контейнер */
+    justify-content: flex-start; /* Центрируем горизонтально */
+    align-items: center; /* Центрируем вертикально */
+    width: fit-content; /* Подгоняем ширину под содержимое */
+    margin: 0 auto; /* Центрируем внутри родителя */
 }
+
 
 .btn-choice:hover {
     background-color: #317daf; /* Насыщенный голубой при наведении */

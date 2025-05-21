@@ -20,7 +20,7 @@ class Pharmacy(models.Model):
     pharmacy_number = models.CharField(max_length=100, blank=True, null=True)  # Код аптеки
     city = models.CharField(max_length=30, blank=True, null=True)  # Эти поля можно заполнить позже
     address = models.CharField(max_length=255, blank=True, null=True)  # Эти поля можно заполнить позже
-    phone = models.CharField(max_length=20, blank=True, null=True)  # Эти поля можно заполнить позже
+    phone = models.CharField(max_length=100, blank=True, null=True)  # Эти поля можно заполнить позже
     opening_hours = models.CharField(max_length=255, blank=True, null=True)
 
 
