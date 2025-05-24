@@ -71,8 +71,6 @@ services:
   redis:
     image: redis:latest
     command: redis-server --requirepass 'dsdasddcklod'
-    ports:
-      - "6379:6379"
     mem_limit: 512m
     healthcheck:
       test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
@@ -100,8 +98,6 @@ services:
         hard: -1
     volumes:
       - es_data_node1:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
     healthcheck:
       test:
         [
