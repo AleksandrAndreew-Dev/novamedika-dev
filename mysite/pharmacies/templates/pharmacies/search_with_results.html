@@ -24,9 +24,9 @@
             <th scope="col">Название</th>
              <th scope="col">Форма</th>
              <th scope="col">Цена в аптеке бел.руб</th>
-            <th scope="col">Цена при бронировании он-лайн (бел.руб)</th>
 
-            <th scope="col">Забронировать</th>
+
+            
             <th scope="col">Количество в Аптеке</th>
             <th scope="col">Производитель, Страна</th>
 
@@ -44,25 +44,8 @@
         <td class="table-light">{{ group.name }}</td>
         <td class="table-light">{{ group.form }}</td>
         <td class="table-light"><span class="pharma-price">{{ group.price }} Br</span></td>
-        <td class="table-light"><span class="sale-price">{{ group.price|floatformat:2|multiply:0.95 }} Br (-5%)</span></td>
-        <td class="table-light">
-            <button type="button" class="btn reserve-button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#reservationModal"
-                    data-product-name="{{ group.name }}"
-                    data-product-form="{{ group.form }}"
-                    data-product-price="{{ group.price }}"
-                     data-product-manufacturer="{{ group.manufacturer }}"
-                      data-product-country="{{ group.country }}"
-                    data-pharmacy-name="{{ group.pharmacy_name }}"
-                    data-pharmacy-number="{{ group.pharmacy_number }}"
-                    data-pharmacy-city="{{ group.pharmacy_city }}"
-                    data-pharmacy-phone="{{ group.pharmacy_phone }}"
-                    data-pharmacy-address="{{ group.pharmacy_address }}">
-                Забронировать
-            </button>
-        </td>
-        <td class="table-light">{{ group.quantity }} уп. Уточняйте кол-во в аптеке</td> <!-- Total quantity -->
+
+        <td class="table-light">{{ group.quantity }} уп. <br> Уточняйте кол-во в аптеке</td> <!-- Total quantity -->
         <td class="table-light">{{ group.manufacturer }}, {{ group.country }}</td>
 
     </tr>
@@ -76,81 +59,7 @@
     </table>
 
 </div>
-<!-- Модальное окно -->
-<div class="modal fade-sm" id="reservationModal" tabindex="-1" aria-labelledby="reservationModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="reservationModalLabel">Информация о бронировании</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Вывод информации об аптеке -->
-                <p><strong>Вы бронируете:</strong></p>
-                <p class=modal-product-name><span id="modal-product-name"></span> <span id="modal-product-form"></span></p>
-                <p><span id="modal-product-manufacturer"></span>, <span id="modal-product-country"></span></p>
-                <p><strong>По Цене:</strong>
-                <span id="modal-product-price"></span> бел. руб</p>
-                 <p><strong>Город:</strong> <span id="modal-pharmacy-city"></span></p>
 
-                <p><strong>Аптека:</strong> <span id="modal-pharmacy-name"></span> №<span
-                        id="modal-pharmacy-number"></span></p>
-
-
-                <p><strong>Адрес:</strong> <span id="modal-pharmacy-address"></span></p>
-                <p><strong>Телефон:</strong> <span id="modal-pharmacy-phone"></span></p>
-
-                <!-- Поля формы для бронирования -->
-                <form id="reservation-form">
-                    <div class="mb-3">
-                        <p class="consent-text">
-
-                            <span><input type="checkbox" required></span><span>
-        Я даю согласие на обработку своих персональных данных для оформления заявки на бронирование
-        в соответствии с <a href="/policy/" target="_blank">Политикой Обработки Данных</a>.
-    </span>
-                        </p>
-                        <p class="consent-text">
-
-                            <span><input type="checkbox" required></span><span>
-        Я  согласен с правилами бронирования  для оформления заявки на бронирование
-        в соответствии с <a href="/policy/" target="_blank">Правилами Бронирования</a>.
-    </span>
-                        </p>
-                        <p>
-                            Ваш запрос будет направлен в аптеку после нажатия кнопки «Забронировать». Мы уведомим Вас о подтверждении заказа.
-                        </p>
-                    </div>
-                    <div class="mb-3">
-                        <label for="userName" class="form-label">Имя</label>
-                        <input type="text" class="form-control" id="userName" name="userName" placeholder="Введите имя"
-                               required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="userSurname" class="form-label">Фамилия</label>
-                        <input type="text" class="form-control" id="userSurname" name="userSurname"
-                               placeholder="Введите фамилию" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="userPhone" class="form-label">Телефон</label>
-                        <input type="tel" class="form-control" id="userPhone" name="userPhone"
-                               placeholder="Введите телефон" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="quantity" class="form-label">Количество</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="submit-reservation">Забронировать</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-
-            </div>
-        </div>
-    </div>
-</div>
 
 
 {% endif %}
@@ -178,90 +87,6 @@
       });
   }
 
-
-$(document).on('click', '.reserve-button', function () {
-  // Получаем данные из кнопки
-  const productName = $(this).data('product-name');
-   const productForm = $(this).data('product-form');
-   const productPrice = $(this).data('product-price');
-    const productManufacturer = $(this).data('product-manufacturer');
-     const productCountry = $(this).data('product-country');
-  const pharmacyName = $(this).data('pharmacy-name');
-  const pharmacyNumber = $(this).data('pharmacy-number');
-    const pharmacyCity = $(this).data('pharmacy-city');
-  const pharmacyPhone = $(this).data('pharmacy-phone');
-  const pharmacyAddress = $(this).data('pharmacy-address');
-
-
-  // Заполняем данные в модальное окно
-   $('#modal-product-name').text(productName);
-     $('#modal-product-form').text(productForm);
-     $('#modal-product-manufacturer').text(productManufacturer);
-     $('#modal-product-country').text(productCountry);
-
-    $('#modal-product-price').text(productPrice);
-  $('#modal-pharmacy-name').text(pharmacyName);
-
-  $('#modal-pharmacy-number').text(pharmacyNumber);
-  $('#modal-pharmacy-city').text(pharmacyCity);
-  $('#modal-pharmacy-address').text(pharmacyAddress);
-  $('#modal-pharmacy-phone').text(pharmacyPhone);
-
-  // Сохраняем данные в форме (если нужно использовать в запросе)
-  $('#reservation-form').data('product-name', productName);
-    $('#reservation-form').data('product-form', productForm);
-   $('#reservation-form').data('product-price', productPrice);
-  $('#reservation-form').data('pharmacy-name', pharmacyName);
-  $('#reservation-form').data('pharmacy-number', pharmacyNumber);
-  $('#reservation-form').data('pharmacy-phone', pharmacyPhone);
-  $('#reservation-form').data('pharmacy-city', pharmacyCity);
-  $('#reservation-form').data('pharmacy-address', pharmacyAddress);
-});
-
-
-$('#submit-reservation').on('click', function () {
-  // Получение данных из формы
-  const userName = $('#userName').val();
-  const userSurname = $('#userSurname').val();
-  const userPhone = $('#userPhone').val();
-  const quantity = $('#quantity').val();
-  const productName = $('#reservation-form').data('product-name');
-  const productForm = $('#reservation-form').data('product-form');
-   const productPrice = $('#reservation-form').data('product-price');
-  const pharmacyName = $('#reservation-form').data('pharmacy-name');
-  const pharmacyNumber = $('#reservation-form').data('pharmacy-number');
-
-  // Проверка на заполненность формы
-  if (!userName || !userSurname || !userPhone || !quantity) {
-      alert("Пожалуйста, заполните все поля формы.");
-      return;
-  }
-
-  // AJAX-запрос
-  $.ajax({
-      type: "POST",
-      url: "{% url 'pharmacies:reserve' %}",
-      data: {
-          csrfmiddlewaretoken: '{{ csrf_token }}', // CSRF-токен
-          userName: userName,
-          userSurname: userSurname,
-          userPhone: userPhone,
-          quantity: quantity,
-          productName: productName,
-          product_form: productForm,
-          productPrice: productPrice,
-          pharmacyName: pharmacyName,
-          pharmacyNumber: pharmacyNumber
-      },
-      success: function (response) {
-          alert("Ваш заказ отправлен! Ожидайте подтверждения от аптеки.");
-          $('#reservationModal').modal('hide'); // Закрыть модальное окно
-      },
-      error: function () {
-          alert("Ошибка бронирования. Попробуйте снова.");
-      }
-  });
-});
 
 
 </script>

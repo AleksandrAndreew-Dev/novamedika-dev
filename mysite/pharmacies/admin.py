@@ -1,5 +1,5 @@
 from django.contrib import admin
-from pharmacies.models import Pharmacy, Product, Order
+from pharmacies.models import Pharmacy, Product
 
 @admin.register(Pharmacy)
 class PharmacyAdmin(admin.ModelAdmin):
@@ -35,11 +35,3 @@ class ProductAdmin(admin.ModelAdmin):
         super().delete_model(request, obj)
         from .tasks import update_elasticsearch_index
         update_elasticsearch_index.delay()
-
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ['processed', 'pharmacy_name', 'pharmacy_number',
-                    'user_name', 'user_surname', 'user_phone',
-                    'product_name', 'product_price', 'quantity']
-
-

@@ -160,6 +160,7 @@ services:
       - db
       - web
     environment:
+      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
       - CELERY_WORKER_SEND_TASK_EVENTS=1
       - CELERY_TASK_SEND_SENT_EVENT=1
       - PYTHONPATH=/app

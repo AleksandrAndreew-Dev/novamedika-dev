@@ -36,7 +36,7 @@ table thead th {
 }
 
 table td {
-    text-align: left;
+    text-align: center;
     vertical-align: middle;
     padding: 10px 12px;
     font-size: 12px; /* Уменьшенный размер шрифта */
@@ -50,7 +50,7 @@ table td {
 
 #product-table th,
 #product-table td {
-    text-align: left; /* Выравнивание влево */
+    text-align: center; /* Выравнивание влево */
     padding-left: 15px; /* Отступ слева */
 }
 
@@ -84,16 +84,15 @@ table td, table th {
 }
 
 #results-table th:nth-child(1) { width: 12%; } /* Аптека */
-#results-table th:nth-child(2) { width: 8%; }  /* Город */
-#results-table th:nth-child(3) { width: 15%; } /* Адрес */
+#results-table th:nth-child(2) { width: 5%; }  /* Город */
+#results-table th:nth-child(3) { width: 14%; } /* Адрес */
 #results-table th:nth-child(4) { width: 10%; } /* Телефон */
 #results-table th:nth-child(5) { width: 15%; } /* Название */
-#results-table th:nth-child(6) { width: 12%; } /* Форма */
-#results-table th:nth-child(7), 
-#results-table th:nth-child(8) { width: 9%; }  /* Цены */
+#results-table th:nth-child(6) { width: 15%; } /* Форма */
+#results-table th:nth-child(7) { width: 7%; }
+#results-table th:nth-child(8) { width: 10%; }  /* Цены */
 #results-table th:nth-child(9) { width: 10%; } /* Кнопка */
-#results-table th:nth-child(10) { width: 10%; } /* Количество */
-#results-table th:nth-child(11) { width: 12%; }
+
 
 /* Цены */
 
@@ -134,7 +133,7 @@ table td, table th {
     padding: 10px 20px;
     font-size: 16px;
     font-weight: bold;
-    text-align: left;
+    text-align: center;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
@@ -160,15 +159,19 @@ table td, table th {
 }
 
 table tbody tr td .pharma-price {
-    padding: 8px 6px; /* Удобные отступы */
-    background-color: rgb(255, 183, 77);
-    border: 1px solid rgb(255, 153, 51);
-    color: rgb(102, 51, 0); /* Гармоничная граница */
+    
+    background-color: #59a5f7; /* Привлекательный голубой тон */
+    color: #ffffff;
+    border: none;
+
+    padding: 9px 4px; /* Удобные отступы */
+    font-size: 16px;
+    
 
     border-radius: var(--border-radius); /* Мягкие углы */
     font-weight: 600; /* Акцент на тексте */
   /* Контрастный текст */
-    font-size: 14px; /* Читаемый размер шрифта */
+    
     text-align: center; /* Центрирование текста */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
     white-space: nowrap; /* Отключаем перенос строк */
@@ -178,7 +181,9 @@ table tbody tr td .pharma-price {
 }
 
 table tbody tr td .pharma-price:hover {
-    background-color: rgb(255, 204, 102);
+    background-color: #317daf;
+    transform: scale(1.05); /* Лёгкое увеличение кнопки */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Усиление тени */
 }
 
 table tbody tr td .sale-price {

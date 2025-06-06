@@ -40,9 +40,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
-
-CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://guest:guest@rabbitmq:5672/")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://:password@redis:6379/0")
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'

@@ -1,7 +1,7 @@
 from celery import shared_task
 from django.utils import timezone
 from elasticsearch import Elasticsearch, helpers
-from .models import Order, Product
+from .models import Product
 from .documents import ProductDocument
 from elasticsearch.connection import RequestsHttpConnection
 
@@ -11,40 +11,40 @@ from elasticsearch.connection import RequestsHttpConnection
 import requests
 from django.core.cache import cache
 from django.conf import settings
-from .models import TelegramSubscriber
 
-@shared_task
-def check_telegram_updates():
-    last_offset = cache.get('telegram_last_offset', 0)
 
-    url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/getUpdates"
-    params = {
-        "offset": last_offset + 1,
-        "timeout": 30  # Long Polling (30 секунд)
-    }
+# @shared_task
+# def check_telegram_updates():
+#     last_offset = cache.get('telegram_last_offset', 0)
 
-    try:
-        response = requests.get(url, params=params)
-        data = response.json()
-        if not data["ok"]:
-            return
+#     url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/getUpdates"
+#     params = {
+#         "offset": last_offset + 1,
+#         "timeout": 30  # Long Polling (30 секунд)
+#     }
 
-        for update in data["result"]:
-            message = update.get("message", {})
-            chat_id = message.get("chat", {}).get("id")
-            command = message.get("text", "").lower()
+#     try:
+#         response = requests.get(url, params=params)
+#         data = response.json()
+#         if not data["ok"]:
+#             return
 
-            if command == "/start":
-                TelegramSubscriber.objects.get_or_create(chat_id=chat_id)
-            elif command == "/stop":
-                TelegramSubscriber.objects.filter(chat_id=chat_id).delete()
+#         for update in data["result"]:
+#             message = update.get("message", {})
+#             chat_id = message.get("chat", {}).get("id")
+#             command = message.get("text", "").lower()
 
-            last_offset = max(last_offset, update["update_id"])
+#             if command == "/start":
+#                 TelegramSubscriber.objects.get_or_create(chat_id=chat_id)
+#             elif command == "/stop":
+#                 TelegramSubscriber.objects.filter(chat_id=chat_id).delete()
 
-        cache.set('telegram_last_offset', last_offset)
+#             last_offset = max(last_offset, update["update_id"])
 
-    except Exception as e:
-        print(f"Ошибка: {e}")
+#         cache.set('telegram_last_offset', last_offset)
+
+#     except Exception as e:
+#         print(f"Ошибка: {e}")
 
 
 
@@ -67,41 +67,41 @@ except Exception as e:
     print(f"Elasticsearch connection error: {str(e)}")
 
 
-@shared_task
-def order_created(order_uuid):
-    from .models import Order, TelegramSubscriber
-    import requests
-    from django.conf import settings
+# @shared_task
+# def order_created(order_uuid):
+#     from .models import Order, TelegramSubscriber
+#     import requests
+#     from django.conf import settings
 
-    try:
-        order = Order.objects.get(uuid=order_uuid)
-        message = (
-            f"🆕 *Новый заказ!*\n"
-            f"🔖 Номер: `{order.uuid}`\n"
-            f"👤 Клиент: {order.user_name} {order.user_surname}\n"
-            f"📱 Телефон: `{order.user_phone}`\n"
-            f"💊 Товар: {order.product_name} {order.product_form}\n"
-            f"💰 Цена: {order.product_price} руб.\n"
-            f"📦 Количество: {order.quantity}\n"
-            f"🏥 Аптека: {order.pharmacy_name} (#{order.pharmacy_number})"
-        )
+#     try:
+#         order = Order.objects.get(uuid=order_uuid)
+#         message = (
+#             f"🆕 *Новый заказ!*\n"
+#             f"🔖 Номер: `{order.uuid}`\n"
+#             f"👤 Клиент: {order.user_name} {order.user_surname}\n"
+#             f"📱 Телефон: `{order.user_phone}`\n"
+#             f"💊 Товар: {order.product_name} {order.product_form}\n"
+#             f"💰 Цена: {order.product_price} руб.\n"
+#             f"📦 Количество: {order.quantity}\n"
+#             f"🏥 Аптека: {order.pharmacy_name} (#{order.pharmacy_number})"
+#         )
 
-        subscribers = TelegramSubscriber.objects.all()
-        for sub in subscribers:
-            url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage"
-            payload = {
-                "chat_id": sub.chat_id,
-                "text": message,
-                "parse_mode": "Markdown"
-            }
-            try:
-                requests.post(url, json=payload)
-            except Exception as e:
-                print(f"Ошибка отправки: {e}")
+#         subscribers = TelegramSubscriber.objects.all()
+#         for sub in subscribers:
+#             url = f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/sendMessage"
+#             payload = {
+#                 "chat_id": sub.chat_id,
+#                 "text": message,
+#                 "parse_mode": "Markdown"
+#             }
+#             try:
+#                 requests.post(url, json=payload)
+#             except Exception as e:
+#                 print(f"Ошибка отправки: {e}")
 
-    except Order.DoesNotExist:
-        return False
-    return True
+#     except Order.DoesNotExist:
+#         return False
+#     return True
 
 
 @shared_task
