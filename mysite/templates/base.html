@@ -22,6 +22,17 @@
 <body>
 
 
+<!-- Cookie Banner -->
+  <div id="cookie-banner" class="cookie-banner">
+    <div class="cookie-content">
+      <p>Мы используем только технические файлы cookie для корректной работы сайта. Продолжая использовать сайт, вы соглашаетесь с этим.</p>
+      <button id="accept-cookies" class="btn btn-primary">Принять</button>
+      <a href="{% url 'pharmacies:cookie_policy' %}" class="cookie-link">Подробнее</a>
+    </div>
+  </div>
+
+
+
 <main class="container-lg">
 
     <section class=" row flex-wrapper container-fluid">
@@ -59,6 +70,7 @@
 </main>
 <div class="footer container-fluid text-center">
     <ul class="list-inline">
+      <li class="list-inline-item"><a href="{% url 'pharmacies:index' %}">Поиск</a> </li>
         <li class="list-inline-item"><a href="#">Условия использования сервиса</a>  </li>
         <li class="list-inline-item"><a href="#"> Политика обработки данных</a></li>
         <li class="list-inline-item"><a href="#">Аптеки рядом</a> </li>
@@ -78,7 +90,23 @@
     </footer>
 
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const cookieBanner = document.getElementById('cookie-banner');
+    const acceptButton = document.getElementById('accept-cookies');
+    
+    // Проверяем HTTPS и отсутствие сохраненного согласия
+    if (true || window.location.protocol === 'https:' && !localStorage.getItem('cookiesAccepted')) {
+      cookieBanner.style.display = 'block';
+    }
 
+    // Обработчик принятия
+    acceptButton.addEventListener('click', function() {
+      cookieBanner.style.display = 'none';
+      localStorage.setItem('cookiesAccepted', 'true');
+    });
+  });
+</script>
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

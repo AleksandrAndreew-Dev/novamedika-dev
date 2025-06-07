@@ -22,6 +22,12 @@ from elasticsearch_dsl import connections
 # Подключение к Elasticsearch
 es = Elasticsearch(hosts=["http://elasticsearch-node-1:9200"])
 
+
+
+
+def cookie_policy(request):
+    return render(request, 'pharmacies/cookie_policy.html')
+
 def index(request):
     query = request.GET.get('name', '').strip()  # Поиск по названию
     city = request.GET.get('city', '').strip()  # Поиск по городу
