@@ -1,20 +1,59 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load customfilters %}
+{% block title %}Политика обработки файлов cookie{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-  <h2>Политика использования файлов cookie</h2>
-  <div class="policy-content">
-    <!-- Вставьте содержимое вашего документа Politika-v-otnoshenii-obrabotki-fajlov-cookie -->
-    <p>Мы используем исключительно технические файлы cookie для:</p>
-    <ul>
-      <li>Обеспечения корректной работы сайта</li>
-      <li>Сохранения настроек сессии</li>
-      <li>Управления нагрузкой на сервер</li>
-    </ul>
-    <p>Файлы cookie не используются для отслеживания пользователей или сбора аналитических данных.</p>
-  </div>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">Политика обработки файлов cookie</h1>
+            <p class="text-center"><em>по состоянию на 11 июня 2025 г.</em></p>
+            
+            <section class="mb-5">
+                <h2>1. Общие положения</h2>
+                <p>Издание Политики в отношении обработки файлов cookie является одной из обязательных мер по обеспечению защиты данных.</p>
+                <p>Для целей настоящей Политики под файлами cookie понимаются текстовые файлы, сохраняемые в интернет-браузере при посещении сайта для запоминания действий пользователя.</p>
+            </section>
+
+            <section class="mb-5">
+                <h2>2. Категории обрабатываемых файлов cookie</h2>
+                <p>На сайте обрабатываются <strong>только технические файлы cookie</strong> для:</p>
+                <ul>
+                    <li>Корректного функционирования сайта</li>
+                    <li>Использования специальных возможностей для пользователей с ограниченными возможностями</li>
+                </ul>
+                <p>Часть файлов cookie хранится в течение текущего сеанса и удаляется после закрытия браузера. Срок хранения остальных файлов cookie ограничен <strong>1 годом</strong> с момента первого посещения сайта.</p>
+            </section>
+
+            <section class="mb-5">
+                <h2>3. Правовые основания обработки файлов cookie</h2>
+                <p>Технические файлы cookie используются для обеспечения функционирования сайта и обрабатываются независимо от согласия пользователя.</p>
+            </section>
+
+            <section class="mb-5">
+                <h2>4. Трансграничная передача файлов cookie</h2>
+                <p>Сайт <strong>не осуществляет</strong> трансграничную передачу файлов cookie.</p>
+            </section>
+
+            <section class="mb-5">
+                <h2>5. Отключение файлов cookie</h2>
+                <p>Пользователь может отключить использование файлов cookie в настройках браузера:</p>
+                <ul class="browser-list">
+                    <li><a href="https://support.mozilla.org/ru/kb/cookies" target="_blank">Mozilla Firefox</a></li>
+                    <li><a href="https://support.google.com/chrome/answer/95647" target="_blank">Google Chrome</a></li>
+                    <li><a href="https://support.apple.com/ru-ru/guide/safari/sfri11471/mac" target="_blank">Safari</a></li>
+                    <li><a href="https://help.opera.com/ru/latest/web-preferences/#cookies" target="_blank">Opera</a></li>
+                    <li><a href="https://support.microsoft.com/ru-ru/microsoft-edge/удаление-cookie-в-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank">Microsoft Edge</a></li>
+                </ul>
+                <p class="mt-3"><em>Примечание: отключение технических cookie может привести к некорректной работе сайта.</em></p>
+            </section>
+
+            <div class="text-center mt-4">
+                <a href="{% url 'pharmacies:index' %}" class="btn btn-primary">Вернуться на главную</a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

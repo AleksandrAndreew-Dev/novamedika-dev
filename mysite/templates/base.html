@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Политика использования файлов cookie на сайте  справка НоваМедика">
     <title>{% block title %}{% endblock title %} - MySite</title>
     <link href="https://fonts.googleapis.com/css?family=Gravitas+One"
           rel="stylesheet">
@@ -72,7 +73,7 @@
     <ul class="list-inline">
       <li class="list-inline-item"><a href="{% url 'pharmacies:index' %}">Поиск</a> </li>
         <li class="list-inline-item"><a href="#">Условия использования сервиса</a>  </li>
-        <li class="list-inline-item"><a href="#"> Политика обработки данных</a></li>
+        <li class="list-inline-item"><a href="{% url 'pharmacies:cookie_policy' %}"> Политика обработки данных</a></li>
         <li class="list-inline-item"><a href="#">Аптеки рядом</a> </li>
         <li class="list-inline-item"><a href="#">Реклама</a> </li>
         <li class="list-inline-item"><a href="#">Контакты</a> </li>
