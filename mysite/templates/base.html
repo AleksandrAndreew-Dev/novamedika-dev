@@ -95,15 +95,17 @@
     const cookieBanner = document.getElementById('cookie-banner');
     const acceptButton = document.getElementById('accept-cookies');
     
-    // Проверяем HTTPS и отсутствие сохраненного согласия
-    if (true || window.location.protocol === 'https:' && !localStorage.getItem('cookiesAccepted')) {
+    // Показываем баннер только на HTTPS
+    if (window.location.protocol === 'https:' && !localStorage.getItem('cookiesAccepted')) {
       cookieBanner.style.display = 'block';
     }
 
-    // Обработчик принятия
     acceptButton.addEventListener('click', function() {
       cookieBanner.style.display = 'none';
       localStorage.setItem('cookiesAccepted', 'true');
+      
+      // Устанавливаем Secure-куку с флагом HttpOnly
+      document.cookie = "cookies_accepted=true; max-age=31536000; path=/; Secure; SameSite=Lax";
     });
   });
 </script>
