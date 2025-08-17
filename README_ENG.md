@@ -169,5 +169,3 @@ Available at: `http://localhost:5555` (Flower)
 - View running tasks  
 - Monitor workers  
 - Manage periodic tasks  
-
----
