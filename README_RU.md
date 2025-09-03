@@ -160,3 +160,41 @@ GET /search_products?name=...&city=...
 - Мониторинг воркеров
 - Управление периодическими задачами
 
+---
+
+
+<h2>📸 Скриншоты</h2>
+
+<p align="center">
+  <figure style="display:inline-block; margin:10px; text-align:center;">
+    <a href="./docs/main_page.png"><img src="./docs/main_page.png" width="250"></a>
+    <figcaption>Главная страница (https)</figcaption>
+  </figure>
+  <figure style="display:inline-block; margin:10px; text-align:center;">
+    <a href="./docs/medicine_name_and_city.png"><img src="./docs/medicine_name_and_city.png" width="250"></a>
+    <figcaption>Поиск по названию и городу</figcaption>
+  </figure>
+  <figure style="display:inline-block; margin:10px; text-align:center;">
+    <a href="./docs/select_dosage_and_form.png"><img src="./docs/select_dosage_and_form.png" width="250"></a>
+    <figcaption>Выбор дозировки и формы</figcaption>
+  </figure>
+</p>
+
+<p align="center">
+  <figure style="display:inline-block; margin:10px; text-align:center;">
+    <a href="./docs/result.png"><img src="./docs/result.png" width="250"></a>
+    <figcaption>Результаты поиска</figcaption>
+  </figure>
+  <figure style="display:inline-block; margin:10px; text-align:center;">
+    <a href="./docs/result_full.png"><img src="./docs/result_full.png" width="250"></a>
+    <figcaption>Полная страница результатов</figcaption>
+  </figure>
+  <figure style="display:inline-block; margin:10px; text-align:center;">
+    <a href="./docs/pharmacies_total.png"><img src="./docs/pharmacies_total.png" width="250"></a>
+    <figcaption>Админ-панель — список аптек</figcaption>
+  </figure>
+  <figure style="display:inline-block; margin:10px; text-align:center;">
+    <a href="./docs/products_total.png"><img src="./docs/products_total.png" width="250"></a>
+    <figcaption>Админ-панель — список товаров</figcaption>
+  </figure>
+</p>
