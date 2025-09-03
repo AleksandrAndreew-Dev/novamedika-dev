@@ -198,39 +198,59 @@ Available at: `http://localhost:5555` (Flower)
 
 ---
 
+
 <h2>📸 Screenshots</h2>
 
-<p align="center">
-  <figure style="display:inline-block; margin:10px; text-align:center;">
-    <a href="./docs/main_page.png"><img src="./docs/main_page.png" width="250"></a>
-    <figcaption>Main Page via https</figcaption>
+<table>
+  <tr>
+    <td align="center">
+      <a href="./docs/main_page.png">
+        <img src="./docs/main_page.png" width="250">
+      </a><br>
+      Main Page (https)
+    </td>
+    <td align="center">
+      <a href="./docs/medicine_name_and_city.png">
+        <img src="./docs/medicine_name_and_city.png" width="250">
+      </a><br>
+      Search by Name and City
+    </td>
+    <td align="center">
+      <a href="./docs/select_dosage_and_form.png">
+        <img src="./docs/select_dosage_and_form.png" width="250">
+      </a><br>
+      Select Dosage and Form
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="./docs/result.png">
+        <img src="./docs/result.png" width="250">
+      </a><br>
+      Search Results
+    </td>
+    <td align="center">
+      <a href="./docs/result_full.png">
+        <img src="./docs/result_full.png" width="250">
+      </a><br>
+      Full Results Page
+    </td>
+    <td align="center">
+      <a href="./docs/pharmacies_total.png">
+        <img src="./docs/pharmacies_total.png" width="250">
+      </a><br>
+      Admin Panel — Pharmacies List
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="./docs/products_total.png">
+        <img src="./docs/products_total.png" width="250">
+      </a><br>
+      Admin Panel — Products List
+    </td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
 
-  </figure>
-  <figure style="display:inline-block; margin:10px; text-align:center;">
-    <a href="./docs/medicine_name_and_city.png"><img src="./docs/medicine_name_and_city.png" width="250"></a>
-    <figcaption>Search by Name and City</figcaption>
-  </figure>
-  <figure style="display:inline-block; margin:10px; text-align:center;">
-    <a href="./docs/select_dosage_and_form.png"><img src="./docs/select_dosage_and_form.png" width="250"></a>
-    <figcaption>Select Dosage and Form</figcaption>
-  </figure>
-</p>
-
-<p align="center">
-  <figure style="display:inline-block; margin:10px; text-align:center;">
-    <a href="./docs/result.png"><img src="./docs/result.png" width="250"></a>
-    <figcaption>Search Results</figcaption>
-  </figure>
-  <figure style="display:inline-block; margin:10px; text-align:center;">
-    <a href="./docs/result_full.png"><img src="./docs/result_full.png" width="250"></a>
-    <figcaption>Full Results Page</figcaption>
-  </figure>
-  <figure style="display:inline-block; margin:10px; text-align:center;">
-    <a href="./docs/pharmacies_total.png"><img src="./docs/pharmacies_total.png" width="250"></a>
-    <figcaption>Admin Panel — Pharmacies List</figcaption>
-  </figure>
-  <figure style="display:inline-block; margin:10px; text-align:center;">
-    <a href="./docs/products_total.png"><img src="./docs/products_total.png" width="250"></a>
-    <figcaption>Admin Panel — Products List</figcaption>
-  </figure>
-</p>
