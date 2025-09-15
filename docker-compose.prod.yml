@@ -63,7 +63,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -93,7 +93,7 @@ services:
       - cluster.name=docker-cluster
       - node.name=elasticsearch-node-1
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Reduced memory for better compatibility
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1g"  # Reduced memory for better compatibility
     ulimits:
       memlock:
         soft: -1
@@ -174,6 +174,8 @@ services:
     volumes:
       - ./media:/app/mysite/media
       - ./temp_csv:/app/temp_csv
+    deploy:
+      replicas: 3
     networks:
       - app_network
 
@@ -195,6 +197,7 @@ volumes:
   postgres_data:
   es_data_node1:
   rabbitmq_data:
+
 
 networks:
   app_network:

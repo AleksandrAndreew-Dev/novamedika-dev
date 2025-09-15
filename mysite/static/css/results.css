@@ -209,6 +209,14 @@ table tbody tr td .sale-price:hover {
     background-color: rgb(173, 255, 173);
 }
 
+.updated-time {
+  display: block;        /* строка на отдельной линии */
+  margin-top: 0.6rem;      /* отступ слева (пример: 1em) */
+  color: #666;           /* опционально: чуть серый текст */
+  font-size: 0.8rem;      /* чуть меньше шрифт */
+}
+
+
 /* Эффекты при наведении */
 table tbody tr td .pharma-price:hover,
 table tbody tr td .sale-price:hover {

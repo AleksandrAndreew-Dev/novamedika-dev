@@ -5,7 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Политика использования файлов cookie на сайте  справка НоваМедика">
-    <title>{% block title %}{% endblock title %} - MySite</title>
+    <meta property="og:title" content="Новамедика | Справка">
+    <meta property="og:description" content="Справка Аптечной сети Новамедика">
+    <meta property="og:image" content="https://spravka.novamedika.com/static/images/preview1.png">
+
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://spravka.novamedika.com/">
+    <title>{% block title %}{% endblock title %}</title>
     <link href="https://fonts.googleapis.com/css?family=Gravitas+One"
           rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
@@ -32,7 +40,17 @@
     </div>
   </div>
 
+<nav class="nav">
+  <ul class="list-inline">
+      <li class="list-inline-item"><a href="{% url 'psi' %}">Центр психологической силы
 
+Инсайтинк </a> </li>
+      <li class="list-inline-item"><a href="{% url 'novamedika' %}">Сайт Новамедика</a> </li>
+
+
+
+    </ul>
+</nav>
 
 <main class="container-lg">
 
@@ -93,7 +111,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     const cookieBanner = document.getElementById('cookie-banner');
     const acceptButton = document.getElementById('accept-cookies');
-    
+
     // Показываем баннер только на HTTPS
     if (window.location.protocol === 'https:' && !localStorage.getItem('cookiesAccepted')) {
       cookieBanner.style.display = 'block';
@@ -102,7 +120,7 @@
     acceptButton.addEventListener('click', function() {
       cookieBanner.style.display = 'none';
       localStorage.setItem('cookiesAccepted', 'true');
-      
+
       // Устанавливаем Secure-куку с флагом HttpOnly
       document.cookie = "cookies_accepted=true; max-age=31536000; path=/; Secure; SameSite=Lax";
     });

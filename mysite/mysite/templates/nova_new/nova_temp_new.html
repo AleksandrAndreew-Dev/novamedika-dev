@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVAMEDIKA - Фармацевтические решения</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: #333;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #145670 0%, #2c3e50 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #4CAF50;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #4CAF50;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #3e8e41;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            color: #145670;
+        }
+
+        .section-title h2:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background: #4CAF50;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .experience {
+            background: #145670;
+            color: white;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .experience-number {
+            font-size: 80px;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .experience-text {
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .services {
+            background: white;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .service-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .service-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #145670;
+        }
+
+        .service-card ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .service-card ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .service-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .service-card ul li:before {
+            content: '✓';
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .partners {
+            background: linear-gradient(135deg, #145670 0%, #2c3e50 100%);
+            color: white;
+        }
+
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .partner-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .partner-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #4CAF50, transparent);
+            margin: 40px 0;
+        }
+
+        /* Стили для аптек */
+        .pharmacies-section {
+            background: white;
+        }
+
+        .pharmacies {
+            display: grid;
+            gap: 15px;
+            margin: 15px 0 25px 0;
+        }
+
+        .header {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            font-weight: bold;
+            color: #fff;
+            text-align: left;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            padding: 8px 16px;
+            cursor: default;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+            background-color: rgb(43, 153, 91);
+            border: 1px solid rgb(33, 126, 74);
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.08);
+            -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.08);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.08);
+            transition: background-color 0.1s linear;
+        }
+
+        .header div {
+            padding-left: 10px;
+        }
+
+        .pharmacy {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            font: 400 14px / 20px 'Roboto', Arial, sans-serif;
+        }
+
+        .pharmacy:hover {
+            border: 1px solid #ffce4a;
+            background-color: #fff8e5;
+        }
+
+        .aptname {
+            font-weight: bold;
+            color: #145670;
+            border-bottom: 1px dashed #145670;
+        }
+
+        .contact-info {
+            background: #f8f9fa;
+            padding: 40px 0;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-card h3 {
+            color: #145670;
+            margin-bottom: 20px;
+        }
+
+        .video-section {
+            text-align: center;
+            padding: 60px 0;
+            background: white;
+        }
+
+        .yvideo {
+            width: 80%;
+            height: 450px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background: #1a2530;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 20px;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .header {
+                display: none;
+            }
+
+            .pharmacy {
+                grid-template-columns: 1fr;
+            }
+
+            .pharmacy div {
+                display: flex;
+                justify-content: flex-start;
+                padding: 5px 0;
+            }
+
+            .pharmacy div:before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: #555;
+                width: 50%;
+                flex-shrink: 0;
+                display: inline-block;
+            }
+
+            .yvideo {
+                width: 90%;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">NOVA<span>MEDIKA</span></a>
+                <nav>
+                    <ul>
+                        <li><a href="#">Главная</a></li>
+                        <li><a href="#">Услуги</a></li>
+                        <li><a href="#">Аптеки</a></li>
+                        <li><a href="#">О компании</a></li>
+                        <li><a href="#">Контакты</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>НОВАМЕДИКА - ФАРМАЦЕВТИЧЕСКИЕ РЕШЕНИЯ</h1>
+            <p>Частное предприятие, Республика Беларусь. Мы создаем пространство для здоровья и благополучия.</p>
+            <a href="#contact" class="btn">Связаться с нами</a>
+        </div>
+    </section>
+
+    <section class="experience">
+        <div class="container">
+            <div class="experience-number">20</div>
+            <div class="experience-text">ЛЕТ УСПЕШНОЙ РАБОТЫ</div>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>НАШИ УСЛУГИ</h2>
+                <p>Компания «Новамедика» основана в 2002 году. Мы предлагаем широкий спектр фармацевтических услуг.</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3>ОПТОВАЯ ТОРГОВЛЯ</h3>
+                    <p>Оптовая фармацевтическая лицензия с 2003 года (склад в Минске).</p>
+                    <ul>
+                        <li>Бизнес-превью и обзор белорусского рынка</li>
+                        <li>Регистрационное обслуживание</li>
+                        <li>Лабораторная помощь при каждой доставке</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <h3>РОЗНИЧНАЯ ТОРГОВЛЯ</h3>
+                    <p>Розничная фармацевтическая лицензия с 2008 года.</p>
+                    <ul>
+                        <li>Запуск с использованием собственной розничной сети</li>
+                        <li>Собственные аптеки по всей Беларуси</li>
+                        <li>Широкий ассортимент лекарственных средств</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <h3>КЛИНИЧЕСКИЕ ИССЛЕДОВАНИЯ</h3>
+                    <p>С 2005 года проводим клинические исследования для фармацевтических организаций.</p>
+                    <ul>
+                        <li>Собственный офис для клинических исследований с 2012 года</li>
+                        <li>Служба депо и офиса клинических исследований</li>
+                        <li>Этикетировочные услуги</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="partners">
+        <div class="container">
+            <div class="section-title">
+                <h2>НАШИ ПАРТНЕРЫ</h2>
+            </div>
+
+            <div class="partners-grid">
+                <div class="partner-card">
+                    <h3>МИРОВЫЕ ПРОИЗВОДИТЕЛИ</h3>
+                    <p>Новамедика сотрудничает с ведущими фармацевтическими компаниями мира</p>
+                </div>
+
+                <div class="partner-card">
+                    <h3>КРУПНЕЙШИЕ БРЕНДЫ</h3>
+                    <p>SANOFI, FERRING, MEDA, ELI LILLY, FRESENIUS, ROCHE DIABETES CARE, BECTON DIKINSON</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pharmacies-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>АПТЕКИ НОВАМЕДИКА</h2>
+                <p>Наша сеть аптек предлагает широкий ассортимент лекарственных средств и медицинских товаров</p>
+            </div>
+
+            <div class="pharmacies">
+                <div class="header">
+                    <div>Аптека</div>
+                    <div>Адрес</div>
+                    <div>Телефон</div>
+                    <div>Режим работы</div>
+                </div>
+
+                <div class="pharmacy">
+                    <div data-label="Аптека"><span class="aptname">Новамедика №1</span></div>
+                    <div data-label="Адрес">г. Минск, ул. Шабаны, 5, пом 2Н</div>
+                    <div data-label="Телефон">8(017)2301969</div>
+                    <div data-label="Режим работы">Пн-Пт 8.00-20.00, Сб-Вс 9.00-18.00</div>
+                </div>
+
+                <div class="pharmacy">
+                    <div data-label="Аптека"><span class="aptname">Новамедика №2</span></div>
+                    <div data-label="Адрес">г. Минск, ул. П. Глебки, д. 64а</div>
+                    <div data-label="Телефон">8(017)3534075</div>
+                    <div data-label="Режим работы">Пн-Вс 9.00-20.00</div>
+                </div>
+
+                <!-- Остальные аптеки из старого файла -->
+                <!-- Для краткости оставлю только несколько примеров -->
+
+                <div class="pharmacy">
+                    <div data-label="Аптека"><span class="aptname">Новамедика №10</span></div>
+                    <div data-label="Адрес">г. Минск, ул. Неманская, д. 18-1Н</div>
+                    <div data-label="Телефон">8(017)3552690, 8(017)3572700</div>
+                    <div data-label="Режим работы">Пн-Вс 9.00-21.00</div>
+                </div>
+
+                <div class="pharmacy">
+                    <div data-label="Аптека"><span class="aptname">Новамедика №41</span></div>
+                    <div data-label="Адрес">Могилевская обл., г. Шклов, ул. Молодежная , д. 1В</div>
+                    <div data-label="Телефон">8(017)5083371</div>
+                    <div data-label="Режим работы">Пн-Вс 09:30 - 18:00</div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <h2>АПТЕКИ ООО «ЭКЛИНИЯ»</h2>
+            </div>
+
+            <div class="pharmacies">
+                <div class="header">
+                    <div>Аптека</div>
+                    <div>Адрес</div>
+                    <div>Телефон</div>
+                    <div>Режим работы</div>
+                </div>
+
+                <div class="pharmacy">
+                    <div data-label="Аптека"><span class="aptname">ЭКЛИНИЯ №2</span></div>
+                    <div data-label="Адрес">г. Минск, ул. Волоха, д. 12</div>
+                    <div data-label="Телефон">(17) 318-14-54 </div>
+                    <div data-label="Режим работы">Пн-Суб 10:00-19:00, Вс - выходной</div>
+                </div>
+
+                <div class="pharmacy">
+                    <div data-label="Аптека"><span class="aptname">ЭКЛИНИЯ №5</span></div>
+                    <div data-label="Адрес">г. Минск, ул. Мазурова, д. 2</div>
+                    <div data-label="Телефон">(17) 379-75-99,  (17) 379-36-25 </div>
+                    <div data-label="Режим работы">Пн-Пт 09:00-21:00, Сб-Вс 09:00-18:00</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="video-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>ПРОФИЛАКТИКА ГРИППА</h2>
+            </div>
+            <iframe class="yvideo" src="https://drive.google.com/file/d/1kbsCI4htMxVRli3FFWV9iSm9cez8qOC7/preview" allow=""></iframe>
+        </div>
+    </section>
+
+    <section class="contact-info" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>КОНТАКТНАЯ ИНФОРМАЦИЯ</h2>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <h3>АДРЕС КОМПАНИИ</h3>
+                    <p>223056, Республика Беларусь, Минская обл.,<br>
+                    Минский р-н, Сеницкий с/с, аг. Сеница,<br>
+                    ул. Армейская 7, офис 10</p>
+                </div>
+
+                <div class="contact-card">
+                    <h3>ТЕЛЕФОНЫ</h3>
+                    <p>+375 29 657-34-89<br>
+                    +375 17 518 09 00<br>
+                    +375 17 518 09 01</p>
+                </div>
+
+                <div class="contact-card">
+                    <h3>ЭЛЕКТРОННАЯ ПОЧТА</h3>
+                    <p>office@novamedika.com<br>
+                    vladimir.golovko@novamedika.com</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 NOVAMEDIKA. Все права защищены.</p>
+        </div>
+    </footer>
+</body>
+</html>

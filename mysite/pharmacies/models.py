@@ -59,7 +59,7 @@ class Product(models.Model):
     retail_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     distributor = models.CharField(max_length=255)
     internal_id = models.CharField(max_length=255)
-    pharmacy = models.ForeignKey('Pharmacy', on_delete=models.CASCADE, related_name='products')
+    pharmacy = models.ForeignKey('Pharmacy', on_delete=models.CASCADE, related_name='products', db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

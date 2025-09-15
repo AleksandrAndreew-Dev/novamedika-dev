@@ -110,23 +110,26 @@ def upload_csv(request, pharmacy_name, pharmacy_number):
         return JsonResponse({"error": str(e)}, status=500)
 
 def bulk_delete_elasticsearch(product_uuids):
+    if not es_client:
+        logger.error("Elasticsearch client not available")
+        return "Elasticsearch client not available"
     es = es_client
     index_name = ProductDocument.Index.name
-
     if not product_uuids or not es.ping():
         return {"status": "skipped", "reason": "No data or ES unavailable"}
-
     try:
-        actions = [
+        actions = (
             {
                 "_op_type": "delete",
                 "_index": index_name,
                 "_id": str(uuid)
             }
             for uuid in product_uuids
-        ]
+        )
         helpers.bulk(es, actions, chunk_size=3000, request_timeout=60)
-        es.indices.refresh(index=index_name)
+        # refresh только если были действия
+        if product_uuids:
+            es.indices.refresh(index=index_name)
         return {"status": "success", "count": len(product_uuids)}
     except Exception as e:
         logger.error(f"Bulk delete error: {str(e)}")
@@ -134,11 +137,13 @@ def bulk_delete_elasticsearch(product_uuids):
 
 @shared_task(bind=True, max_retries=3, soft_time_limit=3600)
 def process_csv_task(self, file_content, pharmacy_name, pharmacy_number):
-    task_record = CsvProcessingTask.objects.create(
+    task_record, created = CsvProcessingTask.objects.update_or_create(
         task_id=self.request.id,
-        pharmacy_name=pharmacy_name,
-        pharmacy_number=pharmacy_number,
-        status='processing'
+        defaults={
+        'pharmacy_name': pharmacy_name,
+        'pharmacy_number': pharmacy_number,
+        'status': 'processing'
+    }
     )
 
     try:
@@ -150,30 +155,49 @@ def process_csv_task(self, file_content, pharmacy_name, pharmacy_number):
         if not normalized_name:
             raise ValueError(f"Invalid pharmacy: {pharmacy_name}")
 
+        # Определяем город для аптеки (можно доработать под ваши правила)
+        city_map = {
+            'Новамедика': 'Минск',
+            'Эклиния': 'Минск',
+        }
+        current_city = city_map.get(normalized_name, 'Минск')
+
         with transaction.atomic():
-            # Ensure the pharmacy exists
+            # Проверяем, есть ли аптека
             existing_pharmacy = Pharmacy.objects.filter(
                 name=normalized_name,
                 pharmacy_number=str(pharmacy_number)
             ).first()
 
-            current_city = existing_pharmacy.city if existing_pharmacy and existing_pharmacy.city else 'New'
+            if existing_pharmacy:
+                # Если city пустое, обновим его
+                if not existing_pharmacy.city or existing_pharmacy.city.strip() == '':
+                    existing_pharmacy.city = current_city
+                    existing_pharmacy.save(update_fields=['city'])
+                pharmacy = existing_pharmacy
+                created = False
+            else:
+                # Создаем новую аптеку с городом
+                pharmacy = Pharmacy.objects.create(
+                    name=normalized_name,
+                    pharmacy_number=str(pharmacy_number),
+                    city=current_city
+                )
+                created = True
 
-            # Создаём или обновляем аптеку
-            pharmacy, created = Pharmacy.objects.update_or_create(
-                name=normalized_name,
-                pharmacy_number=str(pharmacy_number),
-                defaults={'city': current_city}
-            )
-
-            # Delete all existing products for the pharmacy
-
+            # Удаляем старые товары
             existing_products = Product.objects.filter(pharmacy=pharmacy)
             product_uuids_to_delete = list(existing_products.values_list('uuid', flat=True))
-            bulk_delete_elasticsearch(product_uuids_to_delete)
+            if product_uuids_to_delete:
+                # Разбиваем на чанки и отправляем асинхронные задачи
+                chunk_size = 1000
+                for i in range(0, len(product_uuids_to_delete), chunk_size):
+                    chunk = product_uuids_to_delete[i:i + chunk_size]
+                    remove_products_from_index.delay(chunk)
+
             existing_products.delete()
 
-            # Parsing CSV
+            # Парсинг CSV
             fieldnames = [
                 'name', 'manufacturer', 'country', 'serial', 'price', 'quantity',
                 'total_price', 'expiry_date', 'category', 'import_date',
@@ -182,16 +206,16 @@ def process_csv_task(self, file_content, pharmacy_name, pharmacy_number):
             ]
 
             reader = csv.DictReader(StringIO(file_content), fieldnames=fieldnames, delimiter=';')
+            batch_size = 1000
+            products_batch = []
             created_count = 0
-            errors = []
-            processed_products = set()  # Track processed products to avoid duplicates
+            processed_products = set()
 
             for row in reader:
                 try:
                     if not any(row.values()):
                         continue
-
-                    # Normalize product details
+                    # Нормализация данных
                     product_name = row['name']
                     product_form = '-'
                     if row['category'] == 'Лексредства':
@@ -199,59 +223,58 @@ def process_csv_task(self, file_content, pharmacy_name, pharmacy_number):
                     serial = re.sub(r'[\s\-_]+', '', row['serial']).upper()
                     expiry_date = convert_date_format(row['expiry_date'])
                     import_date = convert_date_format(row['import_date'])
-
-                    # Avoid processing duplicates in the CSV file
+                    # Пропускаем дубликаты в CSV
                     product_key = (product_name, serial, expiry_date)
                     if product_key in processed_products:
-                        continue  # Skip duplicate entry
+                        continue
                     processed_products.add(product_key)
-
-                    # Create new product entry
-                    Product.objects.create(
+                    product = Product(
                         pharmacy=pharmacy,
                         name=product_name,
                         form=product_form,
-                        manufacturer=row['manufacturer'].strip(),
-                        country=row['country'].strip(),
+                        manufacturer=(row['manufacturer'] or '').strip(),
+                        country=(row['country'] or '').strip(),
                         serial=serial,
                         price=float(row['price'].replace(',', '.')) if row['price'] else 0.0,
                         quantity=float(row['quantity'].replace(',', '.')) if row['quantity'] else 0.0,
                         expiry_date=expiry_date,
                         category=row['category'],
-                        import_date=convert_date_format(row['import_date']),
+                        import_date=import_date,
                         internal_code=row['internal_code'],
                         wholesale_price=float(row['wholesale_price'].replace(',', '.')) if row['wholesale_price'] else None,
                         retail_price=float(row['retail_price'].replace(',', '.')) if row['retail_price'] else None,
-                        distributor=row['distributor'].strip(),
+                        distributor=(row['distributor'] or '').strip(),
                         internal_id=row['internal_id']
                     )
+                    products_batch.append(product)
                     created_count += 1
-
+                    # Сохраняем батч
+                    if len(products_batch) >= batch_size:
+                        Product.objects.bulk_create(products_batch, ignore_conflicts=True)
+                        products_batch = []
                 except Exception as e:
-                    errors.append(f"Row error: {str(e)} | Data: {dict(row)}")
-                    logger.error(f"Row error: {str(e)} | Data: {dict(row)}")
-                    continue
+                    # Можно добавить лог ошибок по строкам
+                    logger.error(f"Error processing row: {e}")
 
-            # Update Elasticsearch
-            bulk_update_elasticsearch.delay([p.uuid for p in Product.objects.filter(pharmacy=pharmacy)])
+            # Сохраняем остаток
+            if products_batch:
+                Product.objects.bulk_create(products_batch, ignore_conflicts=True)
 
-            # Update task record status
-            task_record.result = {
-                "created": created_count,
-                "errors": len(errors),
-                "error_details": errors[:10]  # Limit stored errors
-            }
-            task_record.status = 'completed'
-            task_record.save()
-
-        return task_record.result
-
+            # Обновляем индекс в Elasticsearch
+            from pharmacies.tasks import bulk_update_elasticsearch
+            product_uuids_qs = Product.objects.filter(pharmacy=pharmacy).values_list('uuid', flat=True)
+            batch = []
+            for uuid in product_uuids_qs.iterator(chunk_size=2000):
+                batch.append(uuid)
+                if len(batch) >= 1000:
+                    bulk_update_elasticsearch.delay(batch.copy())
+                    batch = []
+            if batch:
+                bulk_update_elasticsearch.delay(batch)
     except Exception as e:
-        task_record.status = 'failed'
-        task_record.result = {'error': str(e)}
-        task_record.save()
-        logger.critical(f"Task failed: {str(e)}", exc_info=True)
-        raise self.retry(exc=e, countdown=60)
+        logger.error(f"Error in process_csv_task: {e}", exc_info=True)
+        CsvProcessingTask.objects.filter(task_id=self.request.id).update(status='failed', result=str(e))
+        raise
 
 
 @shared_task

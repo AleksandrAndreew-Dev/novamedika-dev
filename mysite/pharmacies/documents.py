@@ -7,10 +7,10 @@ from .models import Product, Pharmacy
 @registry.register_document
 class ProductDocument(Document):
     pharmacy = fields.ObjectField(properties={
-        'name': fields.TextField(),
-        'pharmacy_number': fields.TextField(),
-        'city': fields.KeywordField(),
-    })
+    'name': fields.TextField(fields={'keyword': fields.KeywordField()}),
+    'pharmacy_number': fields.KeywordField(),  # Используйте Keyword для точных совпадений
+    'city': fields.KeywordField(),
+})
 
     price = fields.FloatField()
     quantity = fields.FloatField()
@@ -21,8 +21,8 @@ class ProductDocument(Document):
     class Index:
         name = 'products'
         settings = {
-            'number_of_shards': 3,
-            'number_of_replicas': 2,
+            'number_of_shards': 1,
+            'number_of_replicas': 1,
             'refresh_interval': '60s'
         }
 
@@ -53,3 +53,6 @@ class ProductDocument(Document):
             }
         }
 
+    def get_queryset(self):
+        """Overwrite to optimize database query"""
+        return super().get_queryset().select_related('pharmacy')

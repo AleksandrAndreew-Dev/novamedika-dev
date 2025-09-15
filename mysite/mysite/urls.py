@@ -16,13 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from mysite.views import show_nova, show_psi
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('psi/', show_psi, name='psi'),
+    path ('novamedika/', show_nova, name='novamedika'),
     path('api/', include('pharmacies.api.urls', namespace='api')),
     path('', include('pharmacies.urls', namespace='pharmacies')),
+
 
 ]
 

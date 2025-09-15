@@ -27,6 +27,7 @@ ELASTICSEARCH_PASSWORD = os.getenv("ELASTIC_PASSWORD")
 ELASTICSEARCH_DSL = {
     "default": {
         "hosts": [{"host": "elasticsearch-node-1", "port": 9200, "scheme": "http"}],
+        'signal_processor': 'django_elasticsearch_dsl.signals.CelerySignalProcessor',
         "http_auth": (ELASTICSEARCH_USERNAME, ELASTICSEARCH_PASSWORD),
         "timeout": 60,
         "use_ssl": False,
@@ -111,9 +112,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Minsk'
 USE_I18N = True
-USE_TZ = True
+USE_TZ = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

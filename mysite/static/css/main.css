@@ -52,6 +52,19 @@ body {
   text-decoration: underline;
 }
 
+
+.nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  margin-right: 2rem;
+}
+
+.nav .list-inline {
+  margin: 0;
+}
+
+
 .header {
     display: flex;
     flex-direction: column;
@@ -203,7 +216,7 @@ h2 {
         padding: 1rem;
         margin-top: 1rem !important;
     }
-    
+
     h1 {
         font-size: 1.8rem;
     }

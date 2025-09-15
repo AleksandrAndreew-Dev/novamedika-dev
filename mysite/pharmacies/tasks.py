@@ -12,6 +12,8 @@ import requests
 from django.core.cache import cache
 from django.conf import settings
 
+import logging
+logger = logging.getLogger(__name__)
 
 # @shared_task
 # def check_telegram_updates():
@@ -109,10 +111,14 @@ def update_elasticsearch_index():
     """Частичное обновление индекса Elasticsearch для измененных продуктов"""
     es = es_client
 
+    
     index_name = ProductDocument.Index.name
-    chunk_size = 1000
+
     if not es.indices.exists(index=index_name):
-        ProductDocument.init()
+        ProductDocument.init(using=es)
+        
+    chunk_size = 1000
+    
 
     last_update = timezone.now() - timezone.timedelta(minutes=2)
     products = Product.objects.filter(updated_at__gte=last_update).select_related('pharmacy')
@@ -143,10 +149,13 @@ def update_elasticsearch_index():
 def full_elasticsearch_resync():
     """Полная синхронизация индекса Elasticsearch"""
     es = es_client
+    
     index_name = ProductDocument.Index.name
 
     if not es.indices.exists(index=index_name):
-        ProductDocument.init()
+        ProductDocument.init(using=es)
+
+    
 
     products = Product.objects.all()
     total_resynced = 0
@@ -191,10 +200,14 @@ def update_pharmacy_city_in_index(pharmacy_name, pharmacy_number):
     from .documents import ProductDocument
 
     es = es_client
+    
+
     index_name = ProductDocument.Index.name
 
     if not es.indices.exists(index=index_name):
-        ProductDocument.init()
+        ProductDocument.init(using=es)
+
+    
 
     try:
         # Ищем аптеку по имени и номеру (оба параметра как строки)
@@ -241,79 +254,89 @@ def chunked(iterable, size):
         yield iterable[i:i + size]
 
 @shared_task
-def remove_pharmacy_products_from_index(pharmacy_uuid):
-    """Удаляет все продукты аптеки из индекса"""
-    from .models import Pharmacy
-    from .documents import ProductDocument
-
-    es = es_client
-    index_name = ProductDocument.Index.name
-
-    try:
-        pharmacy = Pharmacy.objects.get(uuid=pharmacy_uuid)
-
-        # Используем итератор для больших наборов данных
-        product_uuids = pharmacy.products.values_list('uuid', flat=True).iterator()
-
-        chunk_size = 1000
-        actions = []
-
-        # Формируем bulk-запросы
-        for uuid_batch in chunked(product_uuids, chunk_size):
-            for uuid in uuid_batch:
-                actions.append({
-                    "_op_type": "delete",
-                    "_index": index_name,
-                    "_id": str(uuid)
-                })
-
-            # Отправляем batch удалений
-            helpers.bulk(es, actions)
-            actions.clear()  # Очищаем список для следующего batch
-
-        # Однократное обновление индекса
-        es.indices.refresh(index=index_name)
-        return f"Removed products for pharmacy {pharmacy_uuid}"
-
-    except Pharmacy.DoesNotExist:
-        return f"Pharmacy {pharmacy_uuid} not found"
-
-
-@shared_task
 def remove_products_from_index(product_uuids):
     """Удаляет продукты по их UUID из индекса"""
     es = es_client
+    if not es:
+        logger.error("Elasticsearch client not available")
+        return
+
     index_name = ProductDocument.Index.name
 
     if not product_uuids:
         return "No product UUIDs provided"
 
-    if not es.indices.exists(index=index_name):
-        return f"Index {index_name} does not exist"
-
     try:
-        chunk_size = 1000
-        for i in range(0, len(product_uuids), chunk_size):
-            chunk = product_uuids[i:i + chunk_size]
-            body = {
-                "query": {
-                    "terms": {
-                        "_id": [str(uuid) for uuid in chunk]  # Преобразуем UUID в строки
-                    }
+        # Разбиваем на чанки по 1000 элементов
+        for i in range(0, len(product_uuids), 1000):
+            chunk = product_uuids[i:i + 1000]
+            actions = [
+                {
+                    "_op_type": "delete",
+                    "_index": index_name,
+                    "_id": str(uuid)
                 }
-            }
-            es.delete_by_query(index=index_name, body=body)
-
+                for uuid in chunk
+            ]
+            helpers.bulk(es, actions)
+        
         es.indices.refresh(index=index_name)
         return f"Removed {len(product_uuids)} products from index"
     except Exception as e:
+        logger.error(f"Error removing products: {str(e)}")
         return f"Error removing products: {str(e)}"
+
+# @shared_task
+# def remove_pharmacy_products_from_index(pharmacy_uuid):
+#     """Удаляет все продукты аптеки из индекса"""
+#     from .models import Pharmacy
+#     from .documents import ProductDocument
+
+#     es = es_client
+#     if not es_client:
+#         logger.error("Elasticsearch client not available")
+#         return "Elasticsearch client not available"
+    
+    
+    
+#     index_name = ProductDocument.Index.name
+
+#     try:
+#         pharmacy = Pharmacy.objects.get(uuid=pharmacy_uuid)
+
+#         # Используем итератор для больших наборов данных
+#         product_uuids = pharmacy.products.values_list('uuid', flat=True).iterator()
+
+#         chunk_size = 1000
+#         actions = []
+
+#         # Формируем bulk-запросы
+#         for uuid_batch in chunked(product_uuids, chunk_size):
+#             for uuid in uuid_batch:
+#                 actions.append({
+#                     "_op_type": "delete",
+#                     "_index": index_name,
+#                     "_id": str(uuid)
+#                 })
+
+#             # Отправляем batch удалений
+#             helpers.bulk(es, actions)
+#             actions.clear()  # Очищаем список для следующего batch
+
+#         # Однократное обновление индекса
+#         es.indices.refresh(index=index_name)
+#         return f"Removed products for pharmacy {pharmacy_uuid}"
+
+#     except Pharmacy.DoesNotExist:
+#         return f"Pharmacy {pharmacy_uuid} not found"
+
 
 
 # В tasks.py добавьте обработку ошибок и прогрессивную индексацию
 @shared_task
 def bulk_update_elasticsearch(product_uuids):
     es = es_client
+
     index_name = ProductDocument.Index.name
 
     if not product_uuids or not es.ping():
@@ -338,7 +361,7 @@ def bulk_update_elasticsearch(product_uuids):
         for ok, result in helpers.parallel_bulk(
             es,
             actions,
-            chunk_size=2000,
+            chunk_size=5000,
             thread_count=4,
             request_timeout=60
         ):
@@ -358,3 +381,5 @@ def bulk_update_elasticsearch(product_uuids):
     except Exception as e:
         logger.critical(f"Bulk index error: {str(e)}")
         return {"status": "failed", "error": str(e)}
+
+

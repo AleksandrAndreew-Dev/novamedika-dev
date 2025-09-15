@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Центр психологической силы Инсайтинк | Консультации психолога</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4A6FA5;
+            --primary-dark: #345280;
+            --secondary: #6B8E9F;
+            --accent: #FF6B6B;
+            --light: #F8F9FA;
+            --dark: #2C3E50;
+            --text: #333333;
+            --text-light: #666666;
+            --success: #4CAF50;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            background-color: var(--light);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .top-bar {
+            background: var(--primary);
+            color: white;
+            padding: 12px 0;
+            font-size: 0.9rem;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .contact-phones {
+            display: flex;
+            gap: 20px;
+        }
+
+        .contact-phones a {
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .contact-phones a:hover {
+            color: var(--accent);
+        }
+
+        /* Main header */
+        .main-header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        nav ul li a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent);
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover {
+            color: var(--accent);
+        }
+
+        nav ul li a:hover:after {
+            width: 100%;
+        }
+
+        /* Hero section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            margin-left: 15px;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--dark);
+        }
+
+        /* Quote section */
+        .quote-section {
+            background: var(--primary);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0 40px;
+        }
+
+        .quote:before, .quote:after {
+            content: """;
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            position: absolute;
+            opacity: 0.2;
+        }
+
+        .quote:before {
+            left: 0;
+            top: -20px;
+        }
+
+        .quote:after {
+            right: 0;
+            bottom: -40px;
+        }
+
+        /* Age groups */
+        .age-groups {
+            background: var(--light);
+            padding: 50px 0;
+            text-align: center;
+        }
+
+        .age-groups h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .age-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .age-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .age-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main content */
+        .content-wrapper {
+            display: flex;
+            margin: 50px 0;
+            gap: 30px;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            align-self: flex-start;
+            position: sticky;
+            top: 120px;
+        }
+
+        .sidebar-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            color: var(--text);
+            text-decoration: none;
+            transition: var(--transition);
+            display: block;
+            padding: 8px 10px;
+            border-radius: 5px;
+        }
+
+        .sidebar-menu a:hover {
+            color: var(--accent);
+            background: rgba(74, 111, 165, 0.1);
+        }
+
+        .sidebar-menu .menu-heading {
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 15px;
+            margin-bottom: 5px;
+            padding-left: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .section-title {
+            color: var(--primary);
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+        }
+
+        /* Training cards */
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .training-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .training-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .training-card h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .training-card ul {
+            margin: 20px 0;
+            padding-left: 20px;
+            flex-grow: 1;
+        }
+
+        .training-card li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .training-card li:before {
+            content: '✓';
+            color: var(--accent);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Additional services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .service-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .wellness-card {
+            background: var(--primary);
+            color: white;
+        }
+
+        .wellness-card h3 {
+            color: white;
+        }
+
+        .rental-card {
+            background: var(--light);
+            border: 1px solid #eaeaea;
+        }
+
+        /* Footer */
+        .main-footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+        }
+
+        .footer-column p, .footer-column a {
+            opacity: 0.8;
+            margin-bottom: 10px;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .footer-column a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer-column a:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Mobile menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                margin-bottom: 30px;
+            }
+
+            .training-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav {
+                margin-top: 20px;
+                width: 100%;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .contact-phones {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .age-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                right: 20px;
+                top: 20px;
+            }
+
+            .header-content nav {
+                display: none;
+            }
+
+            .header-content nav.active {
+                display: block;
+            }
+
+            .btn-outline {
+                margin-left: 0;
+                margin-top: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .age-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Верхняя панель с контактами -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <div class="license">Лицензия Министерства здравоохранения № П-34 от 25.11.09</div>
+                <div class="contact-phones">
+                    <a href="tel:+375172855400"><i class="fas fa-phone"></i> (017) 2-85-54-00</a>
+                    <a href="tel:+375447970971"><i class="fas fa-phone"></i> (044) 7-970-971 Vel</a>
+                    <a href="tel:+375292570571"><i class="fas fa-phone"></i> (029) 2-570-571 МТС</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной заголовок -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo"><i class="fas fa-brain"></i> Инсайтинк</a>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav>
+                    <ul>
+                        <li><a href="#">Главная</a></li>
+                        <li><a href="#">Услуги</a></li>
+                        <li><a href="#">О нас</a></li>
+                        <li><a href="#">Блог</a></li>
+                        <li><a href="#">Контакты</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Герой секция -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content fade-in">
+                <h1>Центр психологической силы Инсайтинк</h1>
+                <p>Профессиональные консультации психолога и обучающие тренинги для личностного роста и развития</p>
+                <div>
+                    <a href="#services" class="btn">Наши услуги</a>
+                    <a href="#contact" class="btn btn-outline">Записаться на консультацию</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Цитата -->
+    <section class="quote-section">
+        <div class="container">
+            <p class="quote">"Тот, кто учится, не размышляя, впадает в заблуждение. Тот, кто размышляет, не желая учиться, попадает в беду" Конфуций</p>
+        </div>
+    </section>
+
+    <!-- Возрастные группы -->
+    <section class="age-groups">
+        <div class="container">
+            <h2>Психологические услуги для всех возрастов</h2>
+            <div class="age-grid">
+                <div class="age-item fade-in">9-11 лет</div>
+                <div class="age-item fade-in delay-1">12-14 лет</div>
+                <div class="age-item fade-in delay-2">15-17 лет</div>
+                <div class="age-item fade-in delay-3">18-21 год</div>
+                <div class="age-item fade-in">22-27 лет</div>
+                <div class="age-item fade-in delay-1">28-35 лет</div>
+                <div class="age-item fade-in delay-2">36+ лет</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Основной контент -->
+    <div class="container content-wrapper">
+        <!-- Боковая панель с меню -->
+        <div class="sidebar">
+            <h3 class="sidebar-title">Наши услуги</h3>
+            <ul class="sidebar-menu">
+                <li class="menu-heading">Общая информация</li>
+                <li><a href="#">- ЭТИЧЕСКИЕ СТАНДАРТЫ ПСИХОЛОГА</a></li>
+                <li><a href="#">- ПРАВИЛА ЭФФЕКТИВНОЙ КОНСУЛЬТАЦИИ</a></li>
+                <li><a href="#">- ПРЕИМУЩЕСТВА ТРЕНИНГА</a></li>
+
+                <li class="menu-heading">Для взрослых</li>
+                <li><a href="#">- ПСИХОЛОГИЧЕСКИЕ ЗАКОНЫ ПОВЕДЕНИЯ</a></li>
+                <li><a href="#">- Психология влияния и манипуляции</a></li>
+                <li><a href="#">- Как получить от жизни то, что я хочу?</a></li>
+                <li><a href="#">- Эмоциональное выгорание</a></li>
+                <li><a href="#">- Мир эмоций: искусство быть счастливее</a></li>
+                <li><a href="#">- Нам хорошо вдвоем: как найти любовь</a></li>
+
+                <li class="menu-heading">Для организаций</li>
+                <li><a href="#">- Активные профессиональные продажи</a></li>
+                <li><a href="#">- Психология увеличения продаж</a></li>
+                <li><a href="#">- БИЗНЕС КЛУБ "МЫШЛЕНИЕ СТРАТЕГА"</a></li>
+
+                <li class="menu-heading">Для родителей и детей</li>
+                <li><a href="#">- Детские страхи</a></li>
+                <li><a href="#">- Родители и дети: жизнь в радость</a></li>
+
+                <li class="menu-heading">Для школьников</li>
+                <li><a href="#">- Техники общения и взаимоотношения</a></li>
+                <li><a href="#">- Взросление и первая любовь</a></li>
+                <li><a href="#">- Профилактика ПАВ</a></li>
+                <li><a href="#">- Как выбрать профессию</a></li>
+            </ul>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="main-content">
+            <h2 class="section-title">Счастье и любовь</h2>
+
+            <div class="training-grid">
+                <div class="training-card fade-in">
+                    <h3>Мир эмоций: искусство быть счастливее</h3>
+                    <p>«Управлять эмоциями? Разве это возможно? И разве это — правильно?!» — хорошие вопросы. Да, это вполне возможно. И зачастую это правильно, потому что жизнь богата, она любит преподносить нам сюрпризы, трудности и другие творческие задачки.</p>
+                    <p>И при этом возникают разные мысли: «Мир эмоций: управление собой» — это тренинг позитива. Палитра ваших чувств заиграет новыми красками, окружающие люди начнут вам нравиться, а простое умение жить легко, с интересом, заражать людей своим оптимизм и энергией, быть счастливым каждый день — станет вашим.</p>
+                    <p>На тренинге вы узнаете:</p>
+                    <ul>
+                        <li>как и откуда возникают эмоции,</li>
+                        <li>кто ими управляет и можно ли это делать самому,</li>
+                        <li>как настроить свой внутренний мир по своему желанию,</li>
+                        <li>как научиться быть счастливым чаще и дольше,</li>
+                        <li>как сделать так, чтобы окружающие понимали ваше эмоциональное состояние,</li>
+                        <li>как научиться быть эмоционально разным и гибким,</li>
+                        <li>как можно оставаться внутренне спокойным.</li>
+                    </ul>
+                </div>
+
+                <div class="training-card fade-in delay-1">
+                    <h3>Нам хорошо вдвоем: как найти любовь</h3>
+                    <p>Вы когда-нибудь мечтали научиться влюблять в себя понравившегося вам человека? Тогда тренинг для вас. Можно долго страдать от неразделённой любви, а можно действовать и быть рядом именно с тем человеком, которого выбрали вы.</p>
+                    <p>Долой безответную любовь!</p>
+                    <p>Вы знаете, что привлекает женщин в мужчинах и мужчин в женщинах?</p>
+                    <p>Что привязывает и делает отношения прочными?</p>
+                    <p>Как вызвать симпатию, влечение, желание?</p>
+                    <p>Тренинг основан на эффективных и успешных моделях поведения, которые вызывают состояние влюблённости, симпатии, желания более близких отношений.</p>
+                    <p>Вы узнаете:</p>
+                    <ul>
+                        <li>Что делать, если на вас не обращают внимания?</li>
+                        <li>Чего больше всего хотят мужчины?</li>
+                        <li>Чего больше всего хотят женщины?</li>
+                        <li>Чем привлекать и как, даже если вы себя считаете непривлекательным.</li>
+                        <li>Как вызвать интерес и симпатию у понравившегося вам человека.</li>
+                        <li>Секрет привлекательности женщин для мужчин и мужчин для женщин.</li>
+                        <li>Как применять стратегию создания влюблённости.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Дополнительные услуги -->
+            <h3 class="section-title">Дополнительные услуги</h3>
+            <div class="services-grid">
+                <div class="service-card wellness-card fade-in">
+                    <h3><i class="fas fa-spa"></i> ОЗДОРОВИТЕЛЬНЫЙ ЦЕНТР "ВДОХНОВЕНИЕ"</h3>
+                    <ul>
+                        <li>МАССАЖ ВЗРОСЛЫМ, ДЕТЯМ: лечебный, оздоровительный, косметический;</li>
+                        <li>ОБЕРТЫВАНИЕ: водорослевое, грязевое, антицеллюлитное;</li>
+                        <li>SPA ПРОГРАММЫ МУЖЧИНАМ, ЖЕНЩИНАМ</li>
+                        <li>УХОД ЗА ЛИЦОМ</li>
+                        <li>ПИЛЛИНГ ЛИЦА</li>
+                    </ul>
+                </div>
+
+                <div class="service-card rental-card fade-in delay-1">
+                    <h3><i class="fas fa-building"></i> АРЕНДА КОНФЕРЕНЦ-ЗАЛОВ</h3>
+                    <p>ДЛЯ ТРЕНИНГОВ, СЕМИНАРОВ, КОНФЕРЕНЦИЙ</p>
+                    <p>ПЛОЩАДЬ:</p>
+                    <p>19 м2, 25 м2, 45 м2</p>
+                    <p>проектор, экран - дополнительно</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="main-footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Центр Инсайтинк</h3>
+                    <p>Мы предоставляем профессиональные психологические услуги для частных лиц и организаций с 2009 года.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> г. Минск, ул. Примерная, 123</p>
+                    <p><i class="fas fa-phone"></i> (017) 2-85-54-00</p>
+                    <p><i class="fas fa-envelope"></i> info@insight.by</p>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Часы работы</h3>
+                    <p>Пн-Пт: 9:00 - 20:00</p>
+                    <p>Сб: 10:00 - 18:00</p>
+                    <p>Вс: по предварительной записи</p>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>© 2023 Центр психологической силы Инсайтинк. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Мобильное меню
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('nav').classList.toggle('active');
+        });
+
+        // Плавная прокрутка
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+
+                    // Закрываем мобильное меню после клика
+                    document.querySelector('nav').classList.remove('active');
+                }
+            });
+        });
+
+        // Анимация при прокрутке
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.training-card, .service-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

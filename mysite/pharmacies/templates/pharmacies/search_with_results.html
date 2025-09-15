@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load customfilters %}
+{% load human_updated %}
 
 {% block title %}
 Поиск лекарств
@@ -37,7 +38,12 @@
     <tbody>
     {% for group in page_obj %}
     <tr class="table-light">
-        <td class="table-light">{{ group.pharmacy_name }} №{{ group.pharmacy_number }}</td>
+        <td class="table-light">
+  {{ group.pharmacy_name }} №{{ group.pharmacy_number }}
+  
+  <span class="updated-time">Обновлено: {{ group.updated_at|human_updated }}</span>
+</td>
+
         <td class="table-light">{{ group.pharmacy_city }}</td>
         <td class="table-light">{{ group.pharmacy_address }}</td>
         <td class="table-light">{{ group.pharmacy_phone }}</td>
@@ -72,7 +78,7 @@
           paging: true,
           searching: false,
           ordering: true,
-          order: [[6, 'desc']],
+          order: [[6, 'asc']],
           pageLength: 10,
 
           language: {

@@ -86,7 +86,7 @@ def index(request):
     )
 
     # Пагинация (10 записей на страницу)
-    paginated_products = Paginator(grouped_products, 10)
+    paginated_products = Paginator(grouped_products, 50)
     page_number = request.GET.get('page')
     page_obj = paginated_products.get_page(page_number)
 
@@ -97,7 +97,6 @@ def index(request):
         'query': query,
         'city': city,
     })
-
 
 
 def search_products(request):
@@ -150,25 +149,41 @@ def search_products(request):
         return render(request, 'pharmacies/error.html', {'message': 'Ошибка поиска'})
 
     grouped_products = {}
+
     for hit in response["hits"]["hits"]:
         product = hit["_source"]
         pharmacy_city = product.get("pharmacy", {}).get("city", "Unknown")
         pharmacy_name = product.get("pharmacy", {}).get("name", "Unknown")
 
-        key = (product.get("name", "N/A"), product.get("form", "N/A"), product.get("manufacturer", "N/A"),
-               product.get("country", "N/A"))
+        key = (
+            product.get("name", "N/A"),
+            product.get("form", "N/A"),
+            product.get("manufacturer", "N/A"),
+            product.get("country", "N/A")
+        )
+
+        # Если группы ещё нет — создаём
         if key not in grouped_products:
             grouped_products[key] = {
                 "name": product.get("name", "N/A"),
                 "form": product.get("form", "N/A"),
                 "manufacturer": product.get("manufacturer", "N/A"),
                 "country": product.get("country", "N/A"),
-                "pharmacy_city": pharmacy_city,
-                "pharmacy_name": pharmacy_name,
+                "pharmacies": []  # список аптек для этого товара
             }
 
+        # Добавляем аптеку в список
+        grouped_products[key]["pharmacies"].append({
+            "pharmacy_city": pharmacy_city,
+            "pharmacy_name": pharmacy_name,
+            "price": product.get("price"),
+            "quantity": product.get("quantity"),
+        })
+
+    # Преобразуем в список для пагинации
     grouped_products_list = list(grouped_products.values())
-    paginator = Paginator(grouped_products_list, 20)
+
+    paginator = Paginator(grouped_products_list, 50)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -182,8 +197,6 @@ def search_products(request):
         'query': name_query,
         'city_query': city_query,
     })
-
-
 
 def search_pharmacies(request):
     name = request.GET.get('name', '').strip()  # Get the selected product name
@@ -251,9 +264,13 @@ def search(request):
                 'quantity': product.quantity,
                 'manufacturer': product.manufacturer,
                 'country': product.country,
-                'pharmacies': []  # Initialize pharmacies list
+                'pharmacies': [],
+                'updated_at': product.updated_at, 
             }
         else:
+            
+            if product.updated_at > grouped_products[key]['updated_at']:
+                grouped_products[key]['updated_at'] = product.updated_at
             # Sum the quantities for the same product and pharmacy
             grouped_products[key]['quantity'] += product.quantity
 
@@ -268,7 +285,7 @@ def search(request):
 
     # Convert grouped products to a list for pagination
     grouped_products_list = list(grouped_products.values())
-    paginator = Paginator(grouped_products_list, 20)  # Paginate 20 items per page
+    paginator = Paginator(grouped_products_list, 50)  # Paginate 20 items per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -294,6 +311,7 @@ def search(request):
         'form_query': form_query,
         'first_product': first_product,
     })
+
 
 
 
