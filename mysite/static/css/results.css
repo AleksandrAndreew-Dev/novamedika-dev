@@ -1,36 +1,51 @@
 :root {
-    --primary-color: #007bff; /* Основной цвет */
-    --hover-color: #0056b3; /* Цвет при наведении */
-    --text-color: green; /* Основной цвет текста */
-    --secondary-text-color: black; /* Вторичный цвет текста */
-    --accent-color: orange; /* Акцентный цвет */
-    --background-color: #f8f9fa; /* Общий фон */
-    --border-radius: 16px; /* Радиус скругления */
-    --transition-speed: 0.3s; /* Плавность переходов */
+    --primary-blue: #59a5f7;
+    --primary-blue-hover: #317daf;
+    --primary-blue-active: #0056b3;
+    --success-green: rgb(144, 238, 144);
+    --success-green-hover: rgb(173, 255, 173);
+    --success-green-border: rgb(85, 155, 85);
+    --success-green-text: rgb(34, 77, 34);
+    --text-dark: #2c3e50;
+    --text-light: #ffffff;
+    --background-light: #f8f9fa;
+    --table-header-blue: #b0d9f4;
+    --table-row-even: #d9ecf8;
+    --table-row-odd: #f2f9fd;
+    --table-row-hover: #c3e4f5;
+    --border-radius: 16px;
+    --transition-speed: 0.3s;
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
 }
 
 body {
-    font-family: 'Roboto', Arial, sans-serif; /* Профессиональный и современный шрифт */
-    color: var(--secondary-text-color); /* Цвет текста */
-    background-color: var(--background-color); /* Основной фон */
+    font-family: 'Roboto', Arial, sans-serif;
+    color: var(--text-dark);
+    background-color: var(--background-light);
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Избегаем горизонтальной прокрутки */
-    scroll-behavior: smooth; /* Плавный скроллинг */
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    line-height: 1.6;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #f8fbfd; /* Почти белый с лёгким голубоватым оттенком */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Добавление теней */
+    background-color: #f8fbfd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: var(--spacing-md) 0;
 }
 
 table thead th {
-    background-color: #b0d9f4; /* Голубой, приятный для глаз */
-    color: #ffffff; /* Белый текст для контраста */
+    background-color: var(--table-header-blue);
+    color: var(--text-light);
     font-weight: bold;
-    padding: 10px;
+    padding: var(--spacing-sm);
     text-align: center;
     vertical-align: middle;
 }
@@ -38,223 +53,196 @@ table thead th {
 table td {
     text-align: center;
     vertical-align: middle;
-    padding: 10px 12px;
-    font-size: 12px; /* Уменьшенный размер шрифта */
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 14px;
     line-height: 1.2;
-
 }
 
 #results-table td {
-    font-size: 15px; /* Специальный размер для таблицы результатов */
+    font-size: 15px;
 }
 
 #product-table th,
 #product-table td {
-    text-align: center; /* Выравнивание влево */
-    padding-left: 15px; /* Отступ слева */
+    text-align: center;
+    padding-left: var(--spacing-md);
 }
 
-/* Для второй таблицы (search_with_results.html) */
-#results-table th:nth-child(6), /* 6-я колонка "Форма" */
+#results-table th:nth-child(6),
 #results-table td:nth-child(6) {
-    min-width: 120px; /* Минимальная ширина */
-    max-width: 150px; /* Максимальная ширина */
-    white-space: normal; /* Разрешаем перенос */
+    min-width: 120px;
+    max-width: 150px;
+    white-space: normal;
     word-break: break-word;
-    line-height: 1.4; /* Перенос длинных слов */
+    line-height: 1.4;
 }
 
 table tbody tr:nth-child(even) {
-    background-color: #d9ecf8; /* Светлый голубой для четных строк */
+    background-color: var(--table-row-even);
 }
 
 table tbody tr:nth-child(odd) {
-    background-color: #f2f9fd; /* Почти белый */
+    background-color: var(--table-row-odd);
 }
 
 table tbody tr:hover {
-    background-color: #c3e4f5; /* Бледный голубой при наведении */
+    background-color: var(--table-row-hover);
     transition: background-color var(--transition-speed) ease;
 }
 
 table td, table th {
-    padding: 10px;
+    padding: var(--spacing-sm);
     font-size: 16px;
     line-height: 1;
 }
 
-#results-table th:nth-child(1) { width: 12%; } /* Аптека */
-#results-table th:nth-child(2) { width: 5%; }  /* Город */
-#results-table th:nth-child(3) { width: 14%; } /* Адрес */
-#results-table th:nth-child(4) { width: 10%; } /* Телефон */
-#results-table th:nth-child(5) { width: 15%; } /* Название */
-#results-table th:nth-child(6) { width: 15%; } /* Форма */
+#results-table th:nth-child(1) { width: 12%; }
+#results-table th:nth-child(2) { width: 5%; }
+#results-table th:nth-child(3) { width: 14%; }
+#results-table th:nth-child(4) { width: 10%; }
+#results-table th:nth-child(5) { width: 15%; }
+#results-table th:nth-child(6) { width: 15%; }
 #results-table th:nth-child(7) { width: 7%; }
-#results-table th:nth-child(8) { width: 10%; }  /* Цены */
-#results-table th:nth-child(9) { width: 10%; } /* Кнопка */
-
-
-/* Цены */
-
+#results-table th:nth-child(8) { width: 10%; }
+#results-table th:nth-child(9) { width: 10%; }
 
 .reserve-button {
-    background-color: #59a5f7; /* Привлекательный голубой тон */
-    color: #ffffff; /* Контрастный белый текст */
-    border: none; /* Убираем границу */
-    border-radius: 16px; /* Мягкое скругление углов */
-    padding: 10px 5px; /* Удобные отступы */
-    font-size: 16px; /* Увеличенный размер текста */
-    font-weight: bold; /* Акцент на тексте */
-    text-align: center; /* Центрирование текста */
-    cursor: pointer; /* Указатель при наведении */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Лёгкая тень для выделения */
-    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.reserve-button:hover {
-    background-color: #317daf; /* Насыщенный голубой при наведении */
-    transform: scale(1.05); /* Лёгкое увеличение кнопки */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Усиление тени */
-}
-
-.reserve-button:active {
-    background-color: #0056b3; /* Ещё более глубокий голубой при нажатии */
-    transform: scale(0.95); /* Лёгкое уменьшение при нажатии */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Уменьшение тени */
-}
-
-
-
-.btn-choice {
-    background-color: #59a5f7; /* Привлекательный голубой тон */
-    color: #ffffff; /* Контрастный белый текст */
+    background-color: var(--primary-blue);
+    color: var(--text-light);
     border: none;
-    border-radius: 16px;
-    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm) var(--spacing-xs);
     font-size: 16px;
     font-weight: bold;
     text-align: center;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-
-    display: flex; /* Делаем flex-контейнер */
-    justify-content: flex-start; /* Центрируем горизонтально */
-    align-items: center; /* Центрируем вертикально */
-    width: fit-content; /* Подгоняем ширину под содержимое */
-    margin: 0 auto; /* Центрируем внутри родителя */
+    transition: all var(--transition-speed) ease;
 }
 
+.reserve-button:hover {
+    background-color: var(--primary-blue-hover);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.reserve-button:active {
+    background-color: var(--primary-blue-active);
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-choice {
+    background-color: var(--primary-blue);
+    color: var(--text-light);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all var(--transition-speed) ease;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: fit-content;
+    margin: 0 auto;
+}
 
 .btn-choice:hover {
-    background-color: #317daf; /* Насыщенный голубой при наведении */
-    transform: scale(1.05); /* Лёгкое увеличение кнопки */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Усиление тени */
+    background-color: var(--primary-blue-hover);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .btn-choice:active {
-    background-color: #0056b3; /* Ещё более глубокий голубой при нажатии */
-    transform: scale(0.95); /* Лёгкое уменьшение при нажатии */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Уменьшение тени */
+    background-color: var(--primary-blue-active);
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 table tbody tr td .pharma-price {
-    
-    background-color: #59a5f7; /* Привлекательный голубой тон */
-    color: #ffffff;
+    background-color: var(--primary-blue);
+    color: var(--text-light);
     border: none;
-
-    padding: 9px 4px; /* Удобные отступы */
+    padding: 9px 4px;
     font-size: 16px;
-    
-
-    border-radius: var(--border-radius); /* Мягкие углы */
-    font-weight: 600; /* Акцент на тексте */
-  /* Контрастный текст */
-    
-    text-align: center; /* Центрирование текста */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
-    white-space: nowrap; /* Отключаем перенос строк */
-    overflow: hidden; /* Обрезаем лишний текст */
-    text-overflow: ellipsis; /* Добавляем троеточие для длинных текстов */
-    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all var(--transition-speed) ease;
 }
 
 table tbody tr td .pharma-price:hover {
-    background-color: #317daf;
-    transform: scale(1.05); /* Лёгкое увеличение кнопки */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Усиление тени */
+    background-color: var(--primary-blue-hover);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 table tbody tr td .sale-price {
     padding: 8px 6px;
-
-    background-color: rgb(144, 238, 144);
-    border: 1px solid rgb(85, 155, 85);
-    color: rgb(34, 77, 34);
-
+    background-color: var(--success-green);
+    border: 1px solid var(--success-green-border);
+    color: var(--success-green-text);
     border-radius: var(--border-radius);
     font-weight: 600;
-
     font-size: 14px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    white-space: nowrap; /* Отключаем перенос строк */
-    overflow: hidden; /* Обрезаем лишний текст */
-    text-overflow: ellipsis; /* Троеточие для избытка текста */
-    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all var(--transition-speed) ease;
 }
 
 table tbody tr td .sale-price:hover {
-    background-color: rgb(173, 255, 173);
+    background-color: var(--success-green-hover);
 }
 
 .updated-time {
-  display: block;        /* строка на отдельной линии */
-  margin-top: 0.6rem;      /* отступ слева (пример: 1em) */
-  color: #666;           /* опционально: чуть серый текст */
-  font-size: 0.8rem;      /* чуть меньше шрифт */
+    display: block;
+    margin-top: 0.6rem;
+    color: #666;
+    font-size: 0.8rem;
 }
 
-
-/* Эффекты при наведении */
 table tbody tr td .pharma-price:hover,
 table tbody tr td .sale-price:hover {
-    transform: scale(1.05); /* Лёгкое увеличение при наведении */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Усиление тени */
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-
-
 .dataTables_paginate .paginate_button {
-
     margin: 0 0.25%;
 }
 
-
-
-/* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     table, table thead, table tbody, table th, table td {
         display: block;
-        width: 100%; /* Адаптация ширины */
+        width: 100%;
     }
 
     table thead {
-        display: none; /* Скрываем заголовки на мобильных */
+        display: none;
     }
 
     table tbody tr {
         display: flex;
         flex-direction: column;
         border: 1px solid #ddd;
-        margin-bottom: 10px;
+        margin-bottom: var(--spacing-sm);
     }
 
     table tbody tr td {
         display: flex;
-        justify-content: space-between; /* Выравнивание текста */
-        padding: 10px;
+        justify-content: space-between;
+        padding: var(--spacing-sm);
         border-bottom: 1px solid #ddd;
     }
 
@@ -264,12 +252,12 @@ table tbody tr td .sale-price:hover {
 
     table tbody tr td .pharma-price,
     table tbody tr td .sale-price {
-        padding: 5px 8px; /* Ещё меньшее пространство для компактности */
-        font-size: 12px; /* Уменьшенный шрифт для малых экранов */
-        border-radius: 8px; /* Уменьшенные углы для мобильных */
-        box-shadow: none; /* Убираем тени на мобильных для минималистичного дизайна */
-        white-space: normal; /* Разрешаем перенос строк для узких экранов */
-        word-wrap: break-word; /* Перенос слов при необходимости */
-        text-align: left; /* Лёгкое смещение текста влево для удобства чтения */
+        padding: 5px 8px;
+        font-size: 12px;
+        border-radius: 8px;
+        box-shadow: none;
+        white-space: normal;
+        word-wrap: break-word;
+        text-align: left;
     }
 }
