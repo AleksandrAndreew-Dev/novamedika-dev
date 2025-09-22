@@ -38,8 +38,8 @@ class ProductAdmin(admin.ModelAdmin):
         'serial', 'price', 'quantity', 'pharmacy'
     ]
     list_filter = [
-        'name', 'form', 'manufacturer', 'country',
-        'serial', 'price', 'quantity', 'pharmacy'
+        'pharmacy', 'name', 'form', 'manufacturer', 'country',
+        'serial', 'price', 'quantity'
     ]
     search_fields = ['name']
 

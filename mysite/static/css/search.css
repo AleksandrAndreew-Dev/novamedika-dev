@@ -16,6 +16,12 @@
     --spacing-lg: 2rem;
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: 'Roboto', Arial, sans-serif;
     color: var(--text-dark);
@@ -27,11 +33,7 @@ body {
     line-height: 1.6;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+
 
 a {
     text-decoration: none;

@@ -214,6 +214,7 @@ def process_csv_task(self, file_content, pharmacy_name, pharmacy_number):
             for row in reader:
                 try:
                     if not any(row.values()):
+                        logger.warning(f"Row: {row}", exc_info=True)
                         continue
                     # Нормализация данных
                     product_name = row['name']
